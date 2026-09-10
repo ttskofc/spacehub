@@ -1,0 +1,27 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node / Frontend
+client/node_modules/
+client/dist/
+client/.env.local
+
+# Python / FastAPI
+server/__pycache__/
+server/*.py[cod]
+server/.venv/
+server/env/
+server/.env
+
+# 1C / Database
+*.1CD
+*.1cd
+*.log
+*.cfl
+1c-core/dump/
+
+# IDE
+.idea/
+.vscode/
+*.swp
