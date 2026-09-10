@@ -1,0 +1,74 @@
+:root {
+  /* Основа */
+  --color-primary: #670626;               
+  --color-primary-hover: #52041d;         
+  --color-primary-active: #3e0215;    
+  --color-primary-light: #fbf2f4;         /* бейдж */
+  --color-primary-light-hover: #f7e4e8;   
+  
+
+  --color-accent-matcha: #bad797;         
+  --color-accent-matcha-hover: #a6c97d;   
+  --color-accent-matcha-light: #f2f7ec;   
+  --color-accent-matcha-dark: #3b531f;    
+
+  /* Нейтраль */
+  --color-bg-app: #fbf9f7;                
+  --color-surface: #ffffff;               /* карточки  */
+  --color-surface-subtle: #f5f3f1;        /* сайдбар, фильтры, карточки инфо */
+  --color-surface-hover: #edeae7;         
+  
+  --color-text-main: #2d151d;             
+  --color-text-secondary: #745b63;        
+  --color-text-muted: #9e878e;            
+  --color-text-on-primary: #ffffff;       
+  
+  --color-border: #e8dfdc;                
+  --color-border-subtle: #f0e9e6;         
+  --color-border-focus: #670626;          
+
+  /* Статусы  своб, досупно, подтверж */
+  --color-success: #2e7d32;
+  --color-success-bg: #eaf4de;           
+  --color-success-border: #bad797;
+  --color-success-text: #225118;
+
+  /* Ожидает подтверждения */
+  --color-warning: #d97706;
+  --color-warning-bg: #fffbeb;
+  --color-warning-border: #fde68a;
+  --color-warning-text: #92400e;
+
+  /* Занято / Отклонено / Блок */
+  --color-danger: #c53030;
+  --color-danger-bg: #fdf2f2;
+  --color-danger-border: #fecaca;
+  --color-danger-text: #991b1b;
+
+  /* Техническое обслуживание / Клининг / Недоступно (Нейтральный) */
+  --color-neutral: #64748b;
+  --color-neutral-bg: #f1f5f9;
+  --color-neutral-border: #e2e8f0;
+  --color-neutral-text: #475569;
+
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+
+  --shadow-sm: 0 1px 2px 0 rgba(45, 21, 29, 0.04);
+  --shadow-md: 0 4px 12px -2px rgba(45, 21, 29, 0.06), 0 2px 4px -2px rgba(45, 21, 29, 0.03);
+  --shadow-lg: 0 12px 24px -4px rgba(45, 21, 29, 0.08), 0 4px 8px -2px rgba(45, 21, 29, 0.03);
+  --shadow-dropdown: 0 10px 30px -5px rgba(45, 21, 29, 0.12);
+ 
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-family: var(--font-body);
+
+  --transition-fast: 0.15s ease-in-out;
+  --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
