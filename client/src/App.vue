@@ -4,11 +4,17 @@
     <p>Сервис бронирования ресурсов</p>
 
      <div class="btnss">
-    <AppButton variant="primary" size="md">Забронировать</AppButton>
+    <AppButton variant="primary" size="md">
+      <IconArrowRight size="24"">
+      </IconArrowRight>
+    </AppButton>
+
+    <AppButton variant="icon>">
+      <IconCube></IconCube>
+    </AppButton>
 
 
     <AppButton variant="soft" size="sm">Выбрать слот</AppButton>
-
 
     <AppButton variant="ghost" size="bg">Подробнее →</AppButton>
 
@@ -22,6 +28,8 @@
 
 <script setup>
 import AppButton from './components/ui/AppButton.vue';
+import IconArrowRight from './components/ui/Icons/Calendar & Booking Actions/IconArrowRight.vue';
+import IconCube from './components/ui/Icons/Calendar & Booking Actions/IconCube.vue'
 </script>
 
 <style>

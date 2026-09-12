@@ -1,0 +1,45 @@
+<template>
+  <svg
+    :width="computedSize"
+    :height="computedSize"
+    viewBox="0 0 24 24"
+    fill="none"
+    :stroke="color"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path d="M11 4H4C2.89617 4 2 4.89617 2 6V20C2 21.1038 2.89617 22 4 22H18C19.1038 22 20 21.1038 20 20V13" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M18.5 2.49998C19.3279 1.67211 20.6721 1.67211 21.5 2.49998C22.3279 3.32785 22.3279 4.67211 21.5 5.49998L12 15L8 16L9 12L18.5 2.49998V2.49998" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</template>
+
+<script setup>
+import { computed } from 'vue';
+
+const props = defineProps({
+  size: {
+    type: [Number, String],
+    default: 'md'
+  },
+  color: {
+    type: String,
+    default: 'currentColor'
+  }
+});
+
+const SIZES = {
+  xs: 14,
+  sm: 16,
+  md: 20,
+  lg: 24,
+  xl: 32
+};
+
+const computedSize = computed(() => {
+  if (props.size in SIZES) {
+    return SIZES[props.size];
+  }
+  return props.size;
+});
+</script>
