@@ -3,7 +3,7 @@
     class="btn"
     :class="[
       `btn-${variant}`,
-      isIcon ? 'btn-icon' : `btn-${size}`,
+      `btn-${size}`,
       { 'is-loading': loading }
     ]"
     :disabled="disabled || loading"
@@ -53,6 +53,7 @@ defineEmits(['click']);
   text-decoration: none;
   transition: all var(--transition-fast);
   user-select: none;
+  box-sizing: border-box;
 }
 
 .btn:disabled {
@@ -85,6 +86,7 @@ defineEmits(['click']);
   height: 40px;
   padding: 0;
   border-radius: var(--radius-md);
+  flex-shrink: 0;
 }
 
 .btn-primary {
@@ -113,6 +115,11 @@ defineEmits(['click']);
 .btn-secondary:hover {
   background-color: var(--color-surface-subtle, #f1f5f9);
   border-color: #d6ccc9;
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
 }
 
 .btn-soft {
@@ -122,6 +129,11 @@ defineEmits(['click']);
 
 .btn-soft:hover {
   background-color: var(--color-primary-light-hover, #dbeafe);
+  transform: translateY(-1px);
+}
+
+.btn-soft:active {
+  transform: translateY(0);
 }
 
 .btn-ghost {
@@ -133,9 +145,10 @@ defineEmits(['click']);
 
 .btn-ghost:hover {
   gap: 12px;
+  color: var(--color-danger-text);
 }
 
-/* Простой индикатор загрузки */
+
 .btn-spinner {
   width: 16px;
   height: 16px;
