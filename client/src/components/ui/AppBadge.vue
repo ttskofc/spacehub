@@ -1,7 +1,9 @@
 <template>
-  <span 
-    class="badge" 
+  <span
+    class="badge"
     :class="`badge--${variant}`"
+    role="status"
+    :aria-label="text"
   >
     <span v-if="dot" class="badge__dot"></span>
     <span class="badge__label">
@@ -37,7 +39,7 @@ defineProps({
   border-radius: var(--radius-full);
   font-family: var(--font-body, sans-serif);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.4;
   white-space: nowrap;
   user-select: none;
@@ -48,26 +50,25 @@ defineProps({
   height: 8px;
   border-radius: 50%;
   flex-shrink: 0;
-  background-color: #ffffff7b;
+  background-color: currentColor;
+  opacity: 0.5;
 }
 
-
-/* sucess */
 .badge--success {
-  background-color: var(--color-success);
-  color: #ffffff;
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
 }
 
-
-/* warning */
 .badge--warning {
-  background-color: var(--color-warning);
-  color: #ffffff;
+  background-color: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid var(--color-warning-border);
 }
 
-/* danger */
 .badge--danger {
-  background-color: var(--color-danger);
-  color: #ffffff;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border: 1px solid var(--color-danger-border);
 }
 </style>

@@ -4,10 +4,11 @@
     :class="[
       `btn-${variant}`,
       `btn-${size}`,
-      { 'is-loading': loading }
+      { 'btn-block': block, 'is-loading': loading }
     ]"
+    :type="type"
     :disabled="disabled || loading"
-    @click="$emit('click', $event)"
+    :aria-busy="loading"
   >
     <span v-if="loading" class="btn-spinner"></span>
     <slot v-else />
@@ -16,13 +17,21 @@
 
 <script setup>
 defineProps({
+  type: {
+    type: String,
+    default: 'button', // 'button' | 'submit' | 'reset'
+  },
   variant: {
     type: String,
-    default: 'primary', // 'primary' | 'secondary' | 'outline' | 'danger'
+    default: 'primary', // 'primary' | 'secondary' | 'soft' | 'ghost'
   },
   size: {
     type: String,
-    default: 'md', // 'sm' | 'md' | 'lg'
+    default: 'md', // 'sm' | 'md' | 'lg' | 'icon'
+  },
+  block: {
+    type: Boolean,
+    default: false,
   },
   disabled: {
     type: Boolean,
@@ -33,12 +42,9 @@ defineProps({
     default: false,
   },
 });
-
-defineEmits(['click']);
 </script>
 
 <style scoped>
-
 .btn {
   display: inline-flex;
   align-items: center;
@@ -51,7 +57,12 @@ defineEmits(['click']);
   cursor: pointer;
   white-space: nowrap;
   text-decoration: none;
-  transition: all var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    transform var(--transition-fast);
   user-select: none;
   box-sizing: border-box;
 }
@@ -59,7 +70,11 @@ defineEmits(['click']);
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  pointer-events: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
 }
 
 /* Размеры */
@@ -89,6 +104,10 @@ defineEmits(['click']);
   flex-shrink: 0;
 }
 
+.btn-block {
+  width: 100%;
+}
+
 .btn-primary {
   background-color: var(--color-primary);
   color: var(--color-text-on-primary, #ffffff);
@@ -113,8 +132,8 @@ defineEmits(['click']);
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-surface-subtle, #f1f5f9);
-  border-color: #d6ccc9;
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-border);
   transform: translateY(-1px);
 }
 
@@ -128,7 +147,7 @@ defineEmits(['click']);
 }
 
 .btn-soft:hover {
-  background-color: var(--color-primary-light-hover, #dbeafe);
+  background-color: var(--color-primary-light-hover);
   transform: translateY(-1px);
 }
 
@@ -139,15 +158,11 @@ defineEmits(['click']);
 .btn-ghost {
   background: transparent;
   color: var(--color-primary);
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .btn-ghost:hover {
-  gap: 12px;
-  color: var(--color-danger-text);
+  background-color: var(--color-primary-light);
 }
-
 
 .btn-spinner {
   width: 16px;

@@ -25,7 +25,8 @@
   
   --color-border: #e8dfdc;                
   --color-border-subtle: #f0e9e6;         
-  --color-border-focus: #670626;          
+  --color-border-focus: #670626;
+  --color-focus-ring: rgba(103, 6, 38, 0.15);          
 
   /* Статусы  своб, досупно, подтверж */
   --color-success: #2e7d32;
