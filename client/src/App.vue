@@ -23,14 +23,32 @@
 
     <h2>Поля ввода</h2>
     <div class="inputsss">
-      <SearchInput v-model="search" placeholder="Поиск переговорных, рабочих мест..." />
-      <EmailInput v-model="email" placeholder="d.romanov@spacehub.corp" autocomplete="email" />
-      <PasswordInput v-model="password" placeholder="Пароль" size="md"/>
-      <AppInput v-model="name" placeholder="Имя" hint="Имя и фамилия" />
-      <AppInput v-model="errVal" placeholder="Поле с ошибкой" error="Обязательное поле" />
+      <SearchInput placeholder="Поиск переговорных, рабочих мест..." />
+      <EmailInput placeholder="d.romanov@spacehub.corp" autocomplete="email" />
+      <PasswordInput placeholder="Пароль" size="md"/>
+      <AppInput placeholder="Имя" hint="Имя и фамилия" />
+      <AppInput placeholder="Поле с ошибкой" error="Обязательное поле" />
+    </div>
+
+    <h2>Textarea</h2>
+    <div class="inputsss">
+      <AppTextarea placeholder="Оставьте комментарий к брони..." :rows="4" />
+      <AppTextarea placeholder="Сообщение" error="Не более 800 символов" maxlength="800"  :rows="4" />
     </div>
   </div>
+
+    <h2>Дневные таймлайны</h2>
+
+    <div class="miniss">
+    <MiniTimeline 
+    workDayStart="10:00"
+      workDayEnd="20:00"
+      :slotDurationMinutes="60"
+      :bookings="mockBookings"
+      />
+      </div>
 </template>
+ 
 
 <script setup>
 import { ref } from 'vue';
@@ -41,12 +59,31 @@ import AppInput from './components/ui/AppInput.vue';
 import SearchInput from './components/ui/SearchInput.vue';
 import EmailInput from './components/ui/EmailInput.vue';
 import PasswordInput from './components/ui/PasswordInput.vue';
+import AppTextarea from './components/ui/AppTextarea.vue';
+import MiniTimeline from './components/ui/MiniTimeline.vue';
 
 const search = ref('');
 const email = ref('');
 const password = ref('');
 const name = ref('');
 const errVal = ref('');
+const comment = ref('');
+const errComment = ref('');
+
+const mockBookings = ref([
+  {
+    start: '14:00',
+    end: '16:00',
+    title: 'Идет звукозапись',
+  },
+    {
+    start: '16:00',
+    end: '19:00',
+    title: 'Уборка и проветривание',
+    status: 'maintenance'
+  }
+]);
+
 </script>
 
 <style>
@@ -83,5 +120,9 @@ body {
   gap: 10px;
   align-items: flex-start;
   max-width: 360px;
+}
+
+.miniss{
+  width: 400px;
 }
 </style>

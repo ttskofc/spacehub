@@ -33,24 +33,28 @@
   --color-success-bg: #eaf4de;           
   --color-success-border: #bad797;
   --color-success-text: #225118;
+  --color-success-soft: #badba4;   /* заливка «свободно» в мини-таймлайне */
 
   /* Ожидает подтверждения */
   --color-warning: #d97706;
   --color-warning-bg: #fffbeb;
   --color-warning-border: #fde68a;
   --color-warning-text: #92400e;
+  --color-warning-soft: #fcd34d;  /* заливка «ожидает подтверждения» в мини-таймлайне */
 
   /* Занято / Отклонено / Блок */
   --color-danger: #c53030;
   --color-danger-bg: #fdf2f2;
   --color-danger-border: #fecaca;
   --color-danger-text: #991b1b;
+  --color-danger-soft: #f79aa9;    /* заливка «занято» в мини-таймлайне */
 
   /* Техническое обслуживание / Клининг / Недоступно (Нейтральный) */
   --color-neutral: #64748b;
   --color-neutral-bg: #f1f5f9;
   --color-neutral-border: #e2e8f0;
   --color-neutral-text: #475569;
+  --color-neutral-soft: #cbd5e1;  /* заливка «тех.обслуживание» в мини-таймлайне */
 
 
   --radius-xs: 4px;
