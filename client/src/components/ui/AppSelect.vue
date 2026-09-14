@@ -58,68 +58,73 @@
         <IconClose :size="14" />
       </button>
 
-      <div
-        v-if="isOpen"
-        class="app-select__menu"
-        :class="`app-select__menu--${placement}`"
-        role="listbox"
-        :aria-labelledby="label ? labelId : undefined"
-      >
-        <div v-if="searchable" class="app-select__search">
-          <input
-            ref="searchRef"
-            v-model="searchTerm"
-            type="text"
-            class="app-select__search-input"
-            :placeholder="searchPlaceholder || 'Поиск…'"
-            aria-label="Поиск по списку"
-          />
-        </div>
+      <Teleport to="body">
+        <div
+          v-if="isOpen"
+          ref="menuRef"
+          class="app-select__menu"
+          :class="`app-select__menu--${placement}`"
+          :style="menuStyle"
+          role="listbox"
+          :aria-labelledby="label ? labelId : undefined"
+          @keydown="onKeydown"
+        >
+          <div v-if="searchable" class="app-select__search">
+            <input
+              ref="searchRef"
+              v-model="searchTerm"
+              type="text"
+              class="app-select__search-input"
+              :placeholder="searchPlaceholder || 'Поиск…'"
+              aria-label="Поиск по списку"
+            />
+          </div>
 
-        <ul class="app-select__list">
-          <li
-            v-for="(option, index) in displayedOptions"
-            :id="optionId(index)"
-            :key="option.key"
-            class="app-select__option"
-            :class="{
-              'app-select__option--selected': isSelected(option),
-              'app-select__option--active': index === activeIndex,
-              'app-select__option--matcha': option.matcha && isSelected(option),
-              'app-select__option--disabled': option.disabled,
-            }"
-            role="option"
-            :aria-selected="isSelected(option)"
-            :aria-disabled="option.disabled || undefined"
-            @click="selectOption(option)"
-            @mouseenter="setActive(index)"
-          >
-            <span class="app-select__option-main">
-              <span v-if="option.icon" class="app-select__option-icon">
-                <component :is="option.icon" aria-hidden="true" :size="14" />
-              </span>
+          <ul class="app-select__list">
+            <li
+              v-for="(option, index) in displayedOptions"
+              :id="optionId(index)"
+              :key="option.key"
+              class="app-select__option"
+              :class="{
+                'app-select__option--selected': isSelected(option),
+                'app-select__option--active': index === activeIndex,
+                'app-select__option--matcha': option.matcha && isSelected(option),
+                'app-select__option--disabled': option.disabled,
+              }"
+              role="option"
+              :aria-selected="isSelected(option)"
+              :aria-disabled="option.disabled || undefined"
+              @click="selectOption(option)"
+              @mouseenter="setActive(index)"
+            >
+              <span class="app-select__option-main">
+                <span v-if="option.icon" class="app-select__option-icon">
+                  <component :is="option.icon" aria-hidden="true" :size="14" />
+                </span>
 
-              <span class="app-select__option-text">
-                <span class="app-select__option-label">{{ option.label }}</span>
-                <span v-if="option.description" class="app-select__option-description">
-                  {{ option.description }}
+                <span class="app-select__option-text">
+                  <span class="app-select__option-label">{{ option.label }}</span>
+                  <span v-if="option.description" class="app-select__option-description">
+                    {{ option.description }}
+                  </span>
                 </span>
               </span>
-            </span>
 
-            <span class="app-select__option-extra">
-              <span v-if="option.badge" class="app-select__option-badge">{{ option.badge }}</span>
+              <span class="app-select__option-extra">
+                <span v-if="option.badge" class="app-select__option-badge">{{ option.badge }}</span>
 
-              <span v-if="isSelected(option)" class="app-select__option-marker">
-                <span v-if="option.matcha" class="app-select__option-dot"></span>
-                <IconCheck v-else :size="14" />
+                <span v-if="isSelected(option)" class="app-select__option-marker">
+                  <span v-if="option.matcha" class="app-select__option-dot"></span>
+                  <IconCheck v-else :size="14" />
+                </span>
               </span>
-            </span>
-          </li>
+            </li>
 
-          <li v-if="!displayedOptions.length" class="app-select__empty">Ничего не найдено</li>
-        </ul>
-      </div>
+            <li v-if="!displayedOptions.length" class="app-select__empty">Ничего не найдено</li>
+          </ul>
+        </div>
+      </Teleport>
     </div>
 
     <p v-if="errorText" class="app-select__message app-select__message--error" role="alert">
@@ -200,6 +205,9 @@ const rootRef = ref(null);
 const triggerRef = ref(null);
 const clearRef = ref(null);
 const searchRef = ref(null);
+const menuRef = ref(null);
+
+const menuStyle = ref({});
 
 const isOpen = ref(false);
 const activeIndex = ref(-1);
@@ -395,8 +403,8 @@ function onKeydown(e) {
 }
 
 function onClickOutside(e) {
-  if (!rootRef.value) return;
-  if (rootRef.value.contains(e.target)) return;
+  if (rootRef.value?.contains(e.target)) return;
+  if (menuRef.value?.contains(e.target)) return;
   closeMenu();
 }
 
@@ -404,13 +412,57 @@ watch(displayedOptions, (list) => {
   if (activeIndex.value >= list.length) activeIndex.value = -1;
 });
 
+function applyMenuPosition() {
+  if (!isOpen.value || !triggerRef.value || !menuRef.value) return;
+
+  const trigger = triggerRef.value.getBoundingClientRect();
+  const menu = menuRef.value.getBoundingClientRect();
+  const gap = 4;
+  const margin = 8;
+
+  const spaceBelow = window.innerHeight - trigger.bottom;
+  const spaceAbove = trigger.top;
+
+  const wantsTop = props.placement.startsWith('top');
+  const fitsBelow = spaceBelow >= menu.height + gap + margin;
+  const fitsAbove = spaceAbove >= menu.height + gap + margin;
+  const openBelow = wantsTop ? fitsBelow && !fitsAbove : fitsBelow || !fitsAbove;
+
+  const toRight = props.placement.endsWith('end');
+  const desiredLeft = toRight ? trigger.right - menu.width : trigger.left;
+
+  menuStyle.value = {
+    width: `${trigger.width}px`,
+    top: openBelow ? `${trigger.bottom + gap}px` : `${trigger.top - menu.height - gap}px`,
+    left: `${Math.min(Math.max(margin, desiredLeft), window.innerWidth - menu.width - margin)}px`,
+  };
+}
+
+function onReposition() {
+  applyMenuPosition();
+}
+
 watch(isOpen, (open) => {
-  if (open) document.addEventListener('click', onClickOutside);
-  else document.removeEventListener('click', onClickOutside);
+  if (open) {
+    document.addEventListener('click', onClickOutside);
+    window.addEventListener('resize', onReposition);
+    window.addEventListener('scroll', onReposition, true);
+    nextTick(applyMenuPosition);
+  } else {
+    document.removeEventListener('click', onClickOutside);
+    window.removeEventListener('resize', onReposition);
+    window.removeEventListener('scroll', onReposition, true);
+  }
+});
+
+watch(searchTerm, () => {
+  if (isOpen.value) nextTick(applyMenuPosition);
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', onClickOutside);
+  window.removeEventListener('resize', onReposition);
+  window.removeEventListener('scroll', onReposition, true);
 });
 </script>
 
@@ -651,9 +703,10 @@ onBeforeUnmount(() => {
 
 /* Выпадающее меню */
 .app-select__menu {
-  position: absolute;
-  z-index: 50;
-  min-width: 100%;
+  position: fixed;
+  z-index: 1000;
+  width: max-content;
+  min-width: auto;
   max-width: calc(100vw - 32px);
   max-height: 272px;
   padding: 6px;
@@ -663,21 +716,6 @@ onBeforeUnmount(() => {
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-select);
   box-sizing: border-box;
-}
-
-.app-select__menu--bottom-start {
-  top: calc(100% + 4px);
-  left: 0;
-}
-
-.app-select__menu--bottom-end {
-  top: calc(100% + 4px);
-  right: 0;
-}
-
-.app-select__menu--top-start {
-  bottom: calc(100% + 4px);
-  left: 0;
 }
 
 .app-select__search {

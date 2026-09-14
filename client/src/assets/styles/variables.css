@@ -92,4 +92,13 @@
   --color-select-error-ring: rgba(225, 29, 72, 0.15);
   --radius-8: 8px;                                /* ROUND_EIGHT (md trigger) */
   --shadow-select: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
+
+  /* Pagination */
+  --color-pagination-text: #4a4543;               /* неактивная цифра */
+  --color-pagination-text-hover: #1f1b19;         /* цифра при наведении */
+  --color-pagination-arrow: #5a524e;              /* стрелки навигации */
+  --color-pagination-info: #736b66;               /* информер диапазона */
+  --color-pagination-muted: #8c827a;              /* многоточие (...) */
+  --color-pagination-active-shadow: rgba(103, 6, 38, 0.25);
+  --color-pagination-hover-ring: rgba(103, 6, 38, 0.4);
 }

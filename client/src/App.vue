@@ -132,6 +132,28 @@
       <AppSelect v-model="disabledValue" :options="sortOptions" disabled />
     </div>
 
+    <h2>Пагинация</h2>
+    <div class="paginationss">
+      <div class="pagination-card">
+        <AppPagination
+          v-model:page="catalogPage"
+          v-model:pageSize="catalogPageSize"
+          :total-items="catalogTotal"
+          items-label=" ресурсов"
+        />
+      </div>
+      <div class="pagination-card">
+        <AppPagination
+          v-model:page="tablePage"
+          v-model:pageSize="tablePageSize"
+          :total-items="120"
+          size="lg"
+          variant="clean"
+          items-label=" строк"
+        />
+      </div>
+    </div>
+
     <h2>Дневные таймлайны</h2>
     <div class="miniss">
       <AppTimeline
@@ -158,6 +180,7 @@ import AppTimeline from "./components/ui/AppTimeline.vue";
 import AppCheckbox from "./components/ui/AppCheckbox.vue";
 import AppChip from "./components/ui/AppChip.vue";
 import AppSelect from "./components/ui/AppSelect.vue";
+import AppPagination from "./components/ui/AppPagination.vue";
 import IconSliders from "./components/ui/Icons/Catalog Controls/IconSliders.vue";
 
 const search = ref("");
@@ -225,6 +248,13 @@ const bookingOptions = [
 const roomValue = ref("13-14");
 
 const disabledValue = ref(null);
+
+const catalogPage = ref(1);
+const catalogPageSize = ref(6);
+const catalogTotal = ref(53);
+
+const tablePage = ref(6);
+const tablePageSize = ref(10);
 
 const mockBookings = ref([
   {
@@ -297,5 +327,20 @@ body {
   align-items: flex-start;
   max-width: 380px;
   margin-top: 16px;
+}
+
+.paginationss {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 1000px;
+  margin-top: 16px;
+}
+
+.pagination-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
 }
 </style>
