@@ -76,4 +76,20 @@
 
   --transition-fast: 0.15s ease-in-out;
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Select / Dropdown */
+  --color-select-border: #e6e1de;                 /* border-neutral */
+  --color-select-surface: #faf8f6;                /* hover bg триггера */
+  --color-select-text: #2d2926;                   /* text-primary */
+  --color-select-placeholder: #8c827a;            /* text-muted */
+  --color-select-icon: #736b66;                   /* chevron / иконка */
+  --color-select-hover-ring: rgba(103, 6, 38, 0.35);
+  --color-select-focus-ring: rgba(103, 6, 38, 0.12);
+  --color-select-option-selected: rgba(103, 6, 38, 0.08);
+  --color-select-slot: #386a20;                   /* слот доступен (matcha) */
+  --color-select-slot-bg: #e8f5e9;
+  --color-select-error: #e11d48;
+  --color-select-error-ring: rgba(225, 29, 72, 0.15);
+  --radius-8: 8px;                                /* ROUND_EIGHT (md trigger) */
+  --shadow-select: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.06);
 }
