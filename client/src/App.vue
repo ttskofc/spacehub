@@ -132,6 +132,35 @@
       <AppSelect v-model="disabledValue" :options="sortOptions" disabled />
     </div>
 
+    <h2>Карточки ресурсов</h2>
+    <div class="resource-view">
+      <AppButton
+        :variant="resourceViewMode === 'grid' ? 'primary' : 'secondary'"
+        size="sm"
+        @click="resourceViewMode = 'grid'"
+      >
+        Сетка
+      </AppButton>
+      <AppButton
+        :variant="resourceViewMode === 'list' ? 'primary' : 'secondary'"
+        size="sm"
+        @click="resourceViewMode = 'list'"
+      >
+        Список
+      </AppButton>
+    </div>
+    <div class="resource-grid" :class="{ 'resource-grid--list': resourceViewMode === 'list' }">
+      <ResourceCard
+        v-for="resource in resources"
+        :key="resource.id"
+        :resource="resource"
+        :view-mode="resourceViewMode"
+        @book="onBook"
+        @details="onDetails"
+        @toggle-bookmark="onToggleBookmark"
+      />
+    </div>
+
     <h2>Пагинация</h2>
     <div class="paginationss">
       <div class="pagination-card">
@@ -181,6 +210,7 @@ import AppCheckbox from "./components/ui/AppCheckbox.vue";
 import AppChip from "./components/ui/AppChip.vue";
 import AppSelect from "./components/ui/AppSelect.vue";
 import AppPagination from "./components/ui/AppPagination.vue";
+import ResourceCard from "./components/catalog/ResourceCard.vue";
 import IconSliders from "./components/ui/Icons/Catalog Controls/IconSliders.vue";
 
 const search = ref("");
@@ -256,6 +286,92 @@ const catalogTotal = ref(53);
 const tablePage = ref(6);
 const tablePageSize = ref(10);
 
+const resourceViewMode = ref("grid");
+
+const resources = ref([
+  {
+    id: "conf-101",
+    title: "Атлас (Atlas Hall)",
+    code: "#CONF-101",
+    category: "Конференц-зал",
+    location: "Офис Центр • 1 этаж (Крыло А)",
+    capacity: 45,
+    area: 110,
+    imageUrl: "",
+    description:
+      "Большой конференц-зал с LED-стеной 4K и системой ВКС — для презентаций и встреч до 45 человек.",
+    features: [
+      { icon: "capacity", label: "45 чел." },
+      { icon: "area", label: "110 м²" },
+      { icon: "screen", label: "LED Стена 4K" },
+      { icon: "vcs", label: "Система ВКС" },
+      { icon: "climate", label: "Климат-контроль" },
+    ],
+    timelineStart: "11:00",
+    timelineEnd: "20:00",
+    bookings: [
+      { start: "12:00", end: "14:00", status: "busy", title: "Собрание команды" },
+      { start: "16:00", end: "18:00", status: "busy", title: "Презентация" },
+    ],
+    instantBooking: true,
+    isBookmarked: true,
+  },
+  {
+    id: "desk-014",
+    title: "Рабочее место «Орбита»",
+    code: "#DESK-014",
+    category: "Рабочее место",
+    location: "Офис Центр • 3 этаж (Крыло B)",
+    capacity: 1,
+    area: 6,
+    imageUrl: "",
+    description: "Тихое рабочее место у окна с Wi-Fi 6 — для спокойной сосредоточенной работы.",
+    features: [
+      { icon: "capacity", label: "1 чел." },
+      { icon: "area", label: "6 м²" },
+      { icon: "wifi", label: "Wi-Fi 6" },
+      { icon: "acoustics", label: "Тихое пространство" },
+    ],
+    timelineStart: "11:00",
+    timelineEnd: "20:00",
+    bookings: [{ start: "15:00", end: "16:00", status: "pending", title: "Подтверждение" }],
+    instantBooking: true,
+    isBookmarked: false,
+  },
+  {
+    id: "vip-203",
+    title: "VIP Переговорная «Линия»",
+    code: "#VIP-203",
+    category: "VIP Переговорная",
+    location: "Офис Центр • 2 этаж (Крыло А)",
+    capacity: 8,
+    area: 24,
+    imageUrl: "",
+    description: "Малая VIP-переговорная со звукоизоляцией и флипчартом для статусных встреч.",
+    features: [
+      { icon: "capacity", label: "8 чел." },
+      { icon: "area", label: "24 м²" },
+      { icon: "screen", label: 'ТВ 65"' },
+      { icon: "whiteboard", label: "Флипчарт" },
+      { icon: "acoustics", label: "Звукоизоляция" },
+    ],
+    timelineStart: "11:00",
+    timelineEnd: "20:00",
+    bookings: [{ start: "11:00", end: "14:00", status: "busy", title: "Встреча с клиентом" }],
+    instantBooking: false,
+    isBookmarked: false,
+  },
+]);
+
+function onBook() {}
+
+function onDetails() {}
+
+function onToggleBookmark(id) {
+  const item = resources.value.find((r) => r.id === id);
+  if (item) item.isBookmarked = !item.isBookmarked;
+}
+
 const mockBookings = ref([
   {
     start: "14:00",
@@ -276,13 +392,7 @@ const mockBookings = ref([
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family:
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    sans-serif;
+  font-family: var(--font-family, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
 }
 
 body {
@@ -327,6 +437,25 @@ body {
   align-items: flex-start;
   max-width: 380px;
   margin-top: 16px;
+}
+
+.resource-view {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+  max-width: 1080px;
+  margin-top: 16px;
+}
+
+.resource-grid--list {
+  grid-template-columns: 1fr;
 }
 
 .paginationss {

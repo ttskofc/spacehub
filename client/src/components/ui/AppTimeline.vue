@@ -262,10 +262,10 @@ const trackSummary = computed(() => {
 
 .mini-timeline__track {
   display: flex;
-  gap: 4px;
+  gap: 2px;
   align-items: center;
   width: 100%;
-  height: 20px;
+  height: 12px;
   padding: 3px;
   box-sizing: border-box;
   background-color: var(--color-surface-subtle);
