@@ -14,6 +14,10 @@
 
   /* Нейтраль */
   --color-bg-app: #fbf9f7;                
+
+  /* Layout */
+  --sidebar-width: 264px;                  /* фиксированная ширина сайдбара */
+
   --color-surface: #ffffff;               /* карточки  */
   --color-surface-subtle: #f5f3f1;        /* сайдбар, фильтры, карточки инфо */
   --color-surface-hover: #edeae7;         
