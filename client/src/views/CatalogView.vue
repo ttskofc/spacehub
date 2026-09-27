@@ -136,20 +136,7 @@
 
     <h2>Карточки ресурсов</h2>
     <div class="resource-view">
-      <AppButton
-        :variant="resourceViewMode === 'grid' ? 'primary' : 'secondary'"
-        size="sm"
-        @click="resourceViewMode = 'grid'"
-      >
-        Сетка
-      </AppButton>
-      <AppButton
-        :variant="resourceViewMode === 'list' ? 'primary' : 'secondary'"
-        size="sm"
-        @click="resourceViewMode = 'list'"
-      >
-        Список
-      </AppButton>
+      <ViewModeToggle v-model="resourceViewMode" />
     </div>
     <div
       class="resource-grid"
@@ -191,6 +178,11 @@
         <button type="button" class="gallery-item">Профиль</button>
         <button type="button" class="gallery-item">Настройки</button>
       </AppDropdown>
+    </div>
+
+    <h2>Панель фильтров каталога</h2>
+    <div class="catalog-filters-demo">
+      <CatalogFilters v-model="filters" />
     </div>
 
     <h2>Пагинация</h2>
@@ -254,6 +246,8 @@ import AppSelect from "../components/ui/AppSelect.vue";
 import AppPagination from "../components/ui/AppPagination.vue";
 import AppAvatar from "../components/ui/AppAvatar.vue";
 import AppDropdown from "../components/ui/AppDropdown.vue";
+import ViewModeToggle from "../components/ui/ViewModeToggle.vue";
+import CatalogFilters from "../components/catalog/CatalogFilters.vue";
 import ResourceCard from "../components/catalog/ResourceCard.vue";
 import IconSliders from "../components/ui/Icons/Catalog Controls/IconSliders.vue";
 
@@ -351,6 +345,20 @@ const tablePage = ref(6);
 const tablePageSize = ref(10);
 
 const resourceViewMode = ref("grid");
+
+const filters = ref({
+  search: "",
+  dateRangeText: "Сегодня, 8 сент. • 14:00 – 16:00",
+  category: "all",
+  viewMode: "grid",
+  sortBy: "capacity_desc",
+  filterCount: 3,
+  activeTags: [
+    { id: "cap", label: "4–10 чел." },
+    { id: "floor", label: "Этаж 2, 3" },
+    { id: "free", label: "Только свободные сейчас", variant: "matcha" },
+  ],
+});
 
 const resources = ref([
   {
@@ -562,6 +570,15 @@ function onToggleBookmark(id) {
 .gallery-item:hover {
   background: var(--color-surface-subtle);
   color: var(--color-primary);
+}
+
+.catalog-filters-demo {
+  max-width: 1080px;
+  margin-top: 16px;
+  padding: 20px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
 }
 
 .paginationss {
