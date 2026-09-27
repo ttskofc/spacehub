@@ -166,6 +166,33 @@
       />
     </div>
 
+    <h2>Аватары</h2>
+    <div class="avatars">
+      <AppAvatar name="Данил Романов" size="sm" />
+      <AppAvatar name="Данил Романов" size="md" status="success" />
+      <AppAvatar name="Мария Соколова" size="lg" variant="neutral" status="warning" />
+      <AppAvatar name="Иван Петров" size="xl" status="danger" />
+      <AppAvatar src="https://broken.invalid/avatar.png" name="Анна Крылова" size="md" />
+      <AppAvatar size="md" />
+    </div>
+
+    <h2>Выпадающее меню</h2>
+    <div class="dropdowns">
+      <AppDropdown align="left" width="200px" variant="soft">
+        <template #trigger>Меню слева</template>
+        <button type="button" class="gallery-item">Первый пункт</button>
+        <button type="button" class="gallery-item">Второй пункт</button>
+      </AppDropdown>
+
+      <AppDropdown align="right" width="200px" :close-on-click="false">
+        <template #trigger>
+          <AppAvatar name="Данил Романов" size="md" status="success" />
+        </template>
+        <button type="button" class="gallery-item">Профиль</button>
+        <button type="button" class="gallery-item">Настройки</button>
+      </AppDropdown>
+    </div>
+
     <h2>Пагинация</h2>
     <div class="paginationss">
       <div class="pagination-card">
@@ -225,6 +252,8 @@ import AppCheckbox from "../components/ui/AppCheckbox.vue";
 import AppChip from "../components/ui/AppChip.vue";
 import AppSelect from "../components/ui/AppSelect.vue";
 import AppPagination from "../components/ui/AppPagination.vue";
+import AppAvatar from "../components/ui/AppAvatar.vue";
+import AppDropdown from "../components/ui/AppDropdown.vue";
 import ResourceCard from "../components/catalog/ResourceCard.vue";
 import IconSliders from "../components/ui/Icons/Catalog Controls/IconSliders.vue";
 
@@ -499,6 +528,40 @@ function onToggleBookmark(id) {
 
 .resource-grid--list {
   grid-template-columns: 1fr;
+}
+
+.avatars {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dropdowns {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.gallery-item {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  color: var(--color-text-main);
+  cursor: pointer;
+}
+
+.gallery-item:hover {
+  background: var(--color-surface-subtle);
+  color: var(--color-primary);
 }
 
 .paginationss {

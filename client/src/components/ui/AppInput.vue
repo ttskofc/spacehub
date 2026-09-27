@@ -15,6 +15,7 @@
       </span>
 
       <input
+        ref="fieldRef"
         class="app-input__field"
         v-bind="$attrs"
         v-model="model"
@@ -34,6 +35,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 defineOptions({ inheritAttrs: false });
 
 defineProps({
@@ -60,6 +63,14 @@ defineProps({
 });
 
 const model = defineModel({ default: '' });
+
+const fieldRef = ref(null);
+
+function focus() {
+  fieldRef.value?.focus();
+}
+
+defineExpose({ focus });
 </script>
 
 <style scoped>
@@ -109,7 +120,7 @@ const model = defineModel({ default: '' });
 }
 
 .app-input__control.has-suffix .app-input__field {
-  padding-right: 42px;
+  padding-right: var(--app-input-suffix-space, 42px);
 }
 
 .app-input__prefix,

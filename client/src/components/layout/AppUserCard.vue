@@ -1,16 +1,7 @@
 <template>
   <div class="user-card">
     <span class="user-card__identity">
-      <span class="user-card__avatar" :class="{ 'user-card__avatar--fallback': !avatarUrl }">
-        <img
-          v-if="avatarUrl"
-          class="user-card__avatar-img"
-          :src="avatarUrl"
-          :alt="name"
-          loading="lazy"
-        />
-        <template v-else>{{ initials }}</template>
-      </span>
+      <AppAvatar :src="avatarUrl" :name="name" size="sm" />
 
       <span class="user-card__texts">
         <span class="user-card__name">{{ name }}</span>
@@ -30,10 +21,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import AppAvatar from '../ui/AppAvatar.vue';
 import IconMoreVertical from '../ui/Icons/Shell&Navigation/IconMoreVertical.vue';
 
-const props = defineProps({
+defineProps({
   name: {
     type: String,
     required: true,
@@ -49,11 +40,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['menu']);
-
-const initials = computed(() => {
-  const letters = props.name.trim().split(/\s+/).map((w) => w[0] || '');
-  return (letters[0] || '?') + (letters[1] || '');
-});
 </script>
 
 <style scoped>
@@ -72,33 +58,6 @@ const initials = computed(() => {
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.user-card__avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-full);
-  font-family: var(--font-heading, sans-serif);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.user-card__avatar--fallback {
-  background: var(--color-primary-light);
-}
-
-.user-card__avatar-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: var(--radius-full);
 }
 
 .user-card__texts {
