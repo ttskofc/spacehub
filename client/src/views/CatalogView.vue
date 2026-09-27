@@ -1,9 +1,35 @@
 <template>
   <div class="catalog-page">
-    <header class="catalog-page__header">
-      <h1>SpaceHub</h1>
-      <p>Сервис бронирования ресурсов</p>
-    </header>
+    <CatalogHeader
+      title="Ресурсы организации"
+      description="Интерактивный каталог переговорных, рабочих мест и конференц-залов"
+      :stats="catalogStats"
+    />
+    <div class="catalog-filters-demo">
+      <CatalogFilters v-model="filters" />
+    </div>
+
+    <!-- Старый локальный тумблер вида: переключение теперь идёт из CatalogFilters (filters.viewMode) -->
+    <!--
+    <div class="resource-view">
+      <ViewModeToggle v-model="resourceViewMode" />
+    </div>
+    -->
+    <div
+      class="resource-grid"
+      :class="{ 'resource-grid--list': filters.viewMode === 'list' }"
+    >
+      <ResourceCard
+        v-for="resource in resources"
+        :key="resource.id"
+        :resource="resource"
+        :view-mode="filters.viewMode"
+        @book="onBook"
+        @details="onDetails"
+        @toggle-bookmark="onToggleBookmark"
+      />
+    </div>
+
 
     <h2>Кнопки</h2>
     <div class="btnss">
@@ -134,24 +160,6 @@
       <AppSelect v-model="disabledValue" :options="sortOptions" disabled />
     </div>
 
-    <h2>Карточки ресурсов</h2>
-    <div class="resource-view">
-      <ViewModeToggle v-model="resourceViewMode" />
-    </div>
-    <div
-      class="resource-grid"
-      :class="{ 'resource-grid--list': resourceViewMode === 'list' }"
-    >
-      <ResourceCard
-        v-for="resource in resources"
-        :key="resource.id"
-        :resource="resource"
-        :view-mode="resourceViewMode"
-        @book="onBook"
-        @details="onDetails"
-        @toggle-bookmark="onToggleBookmark"
-      />
-    </div>
 
     <h2>Аватары</h2>
     <div class="avatars">
@@ -180,10 +188,7 @@
       </AppDropdown>
     </div>
 
-    <h2>Панель фильтров каталога</h2>
-    <div class="catalog-filters-demo">
-      <CatalogFilters v-model="filters" />
-    </div>
+
 
     <h2>Пагинация</h2>
     <div class="paginationss">
@@ -248,6 +253,7 @@ import AppAvatar from "../components/ui/AppAvatar.vue";
 import AppDropdown from "../components/ui/AppDropdown.vue";
 import ViewModeToggle from "../components/ui/ViewModeToggle.vue";
 import CatalogFilters from "../components/catalog/CatalogFilters.vue";
+import CatalogHeader from "../components/catalog/CatalogHeader.vue";
 import ResourceCard from "../components/catalog/ResourceCard.vue";
 import IconSliders from "../components/ui/Icons/Catalog Controls/IconSliders.vue";
 
@@ -344,7 +350,16 @@ const catalogTotal = ref(53);
 const tablePage = ref(6);
 const tablePageSize = ref(10);
 
+// Только для закомментированного тумблера вида выше; карточки сетятся по filters.viewMode
 const resourceViewMode = ref("grid");
+
+const catalogStats = ref({
+  availableCount: 14,
+  totalCount: 18,
+  occupancyPercent: 11,
+  peakHour: "14:00 – 16:30",
+  lastUpdated: "14:10",
+});
 
 const filters = ref({
   search: "",
@@ -470,10 +485,6 @@ function onToggleBookmark(id) {
 .catalog-page {
   padding: 24px;
   max-width: 1080px;
-}
-
-.catalog-page__header {
-  margin-bottom: 24px;
 }
 
 .catalog-page h2 {
