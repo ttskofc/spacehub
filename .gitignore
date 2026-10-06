@@ -5,7 +5,9 @@ Thumbs.db
 # Node / Frontend
 client/node_modules/
 client/dist/
+client/.env
 client/.env.local
+client/logs/
 
 # Python / FastAPI
 server/__pycache__/
@@ -13,6 +15,7 @@ server/*.py[cod]
 server/.venv/
 server/env/
 server/.env
+server/logs/
 
 # 1C / Database
 *.1CD
