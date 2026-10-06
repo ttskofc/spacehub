@@ -23,7 +23,11 @@
       />
 
       <span v-if="locationShort" class="resource-card__location-badge">
-        <IconMapPin class="resource-card__location-badge-icon" aria-hidden="true" :size="12" />
+        <IconMapPin
+          class="resource-card__location-badge-icon"
+          aria-hidden="true"
+          :size="12"
+        />
         {{ locationShort }}
       </span>
     </div>
@@ -37,19 +41,28 @@
           class="resource-card__bookmark"
           :class="{ 'resource-card__bookmark--active': resource.isBookmarked }"
           :aria-pressed="resource.isBookmarked"
-          :aria-label="resource.isBookmarked ? 'Убрать из избранного' : 'В избранное'"
+          :aria-label="
+            resource.isBookmarked ? 'Убрать из избранного' : 'В избранное'
+          "
           @click.stop="emit('toggle-bookmark', resource.id)"
         >
           <IconBookmark :size="16" />
         </button>
-        <span v-else-if="resource.code" class="resource-card__code">{{ resource.code }}</span>
+        <span v-else-if="resource.code" class="resource-card__code">{{
+          resource.code
+        }}</span>
       </div>
 
-      <p v-if="description" class="resource-card__description">{{ description }}</p>
+      <p v-if="description" class="resource-card__description">
+        {{ description }}
+      </p>
 
       <div v-if="features.length" class="resource-card__features">
         <div v-if="primaryFeatures.length" class="resource-card__feature-hero">
-          <template v-for="(feature, index) in primaryFeatures" :key="feature.label">
+          <template
+            v-for="(feature, index) in primaryFeatures"
+            :key="feature.label"
+          >
             <span class="resource-card__feature-hero-item">
               <span class="resource-card__feature-icon">
                 <component
@@ -70,8 +83,15 @@
           </template>
         </div>
 
-        <div v-if="secondaryFeatures.length" class="resource-card__feature-secondary">
-          <span v-for="feature in secondaryFeatures" :key="feature.label" class="resource-card__feature">
+        <div
+          v-if="secondaryFeatures.length"
+          class="resource-card__feature-secondary"
+        >
+          <span
+            v-for="feature in secondaryFeatures"
+            :key="feature.label"
+            class="resource-card__feature"
+          >
             <span class="resource-card__feature-icon">
               <component
                 :is="FEATURE_ICONS[feature.icon]"
@@ -96,7 +116,8 @@
 
     <div class="resource-card__footer">
       <template v-if="viewMode === 'grid'">
-        <AppButton variant="ghost" @click="emit('details', resource)">Подробнее 
+        <AppButton variant="ghost" @click="emit('details', resource)"
+          >Подробнее
           <IconArrowRight></IconArrowRight>
         </AppButton>
         <AppButton
@@ -111,10 +132,16 @@
       <template v-else>
         <span
           class="resource-card__booking-hint"
-          :class="{ 'resource-card__booking-hint--muted': !resource.instantBooking }"
+          :class="{
+            'resource-card__booking-hint--muted': !resource.instantBooking,
+          }"
         >
-          <IconCheck v-if="resource.instantBooking" aria-hidden="true" :size="12" />
-          {{ resource.instantBooking ? 'Мгновенный букинг' : 'По запросу' }}
+          <IconCheck
+            v-if="resource.instantBooking"
+            aria-hidden="true"
+            :size="12"
+          />
+          {{ resource.instantBooking ? "Мгновенный букинг" : "По запросу" }}
         </span>
         <AppButton
           variant="primary"
@@ -133,23 +160,26 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
-import AppButton from '../ui/AppButton.vue';
-import AppBadge from '../ui/AppBadge.vue';
-import AppTimeline from '../ui/AppTimeline.vue';
+import { computed } from "vue";
+import AppButton from "../ui/AppButton.vue";
+import AppBadge from "../ui/AppBadge.vue";
+import AppTimeline from "../ui/AppTimeline.vue";
 import IconArrowRight from "../ui/Icons/Calendar & Booking Actions/IconArrowRight.vue";
-import IconArea from '../ui/Icons/Icon Features & Specs/IconArea.vue';
-import IconCheck from '../ui/Icons/Catalog Controls/IconCheck.vue';
-import IconMapPin from '../ui/Icons/Catalog Controls/IconMapPin.vue';
-import IconDisplay4K from '../ui/Icons/Icon Features & Specs/IconDisplay4K.vue';
-import IconGrid from '../ui/Icons/Shell&Navigation/IconGrid.vue';
-import IconBookmark from '../ui/Icons/Calendar & Booking Actions/IconBookmark.vue';
-import IconSoundWaves from '../ui/Icons/Icon Features & Specs/IconSoundWaves.vue';
-import IconThermometer from '../ui/Icons/Icon Features & Specs/IconThermometer.vue';
-import IconUsers from '../ui/Icons/Icon Features & Specs/IconUsers.vue';
-import IconVideoCamera from '../ui/Icons/Icon Features & Specs/IconVideoCamera.vue';
-import IconWhiteboard from '../ui/Icons/Icon Features & Specs/IconWhiteboard.vue';
-import IconWifi from '../ui/Icons/Icon Features & Specs/IconWifi.vue';
+import IconArea from "../ui/Icons/Icon Features & Specs/IconArea.vue";
+import IconCheck from "../ui/Icons/Catalog Controls/IconCheck.vue";
+import IconMapPin from "../ui/Icons/Catalog Controls/IconMapPin.vue";
+import IconBlinds from "../ui/Icons/Icon Features & Specs/IconBlinds.vue";
+import IconDisplay4K from "../ui/Icons/Icon Features & Specs/IconDisplay4K.vue";
+import IconLightning from "../ui/Icons/Icon Features & Specs/IconLightning.vue";
+import IconGrid from "../ui/Icons/Shell&Navigation/IconGrid.vue";
+import IconBookmark from "../ui/Icons/Calendar & Booking Actions/IconBookmark.vue";
+import IconSoundWaves from "../ui/Icons/Icon Features & Specs/IconSoundWaves.vue";
+import IconThermometer from "../ui/Icons/Icon Features & Specs/IconThermometer.vue";
+import IconUsers from "../ui/Icons/Icon Features & Specs/IconUsers.vue";
+import IconVideoCamera from "../ui/Icons/Icon Features & Specs/IconVideoCamera.vue";
+import IconWhiteboard from "../ui/Icons/Icon Features & Specs/IconWhiteboard.vue";
+import IconWifi from "../ui/Icons/Icon Features & Specs/IconWifi.vue";
+import IconHotDog from "../ui/Icons/IconHotDog.vue";
 
 const props = defineProps({
   resource: {
@@ -158,15 +188,16 @@ const props = defineProps({
   },
   viewMode: {
     type: String,
-    default: 'grid', // 'grid' | 'list'
-    validator: (v) => ['grid', 'list'].includes(v),
+    default: "grid", // 'grid' | 'list'
+    validator: (v) => ["grid", "list"].includes(v),
   },
 });
 
-const emit = defineEmits(['book', 'details', 'toggle-bookmark']);
+const emit = defineEmits(["book", "details", "toggle-bookmark"]);
 
 const FEATURE_ICONS = {
   capacity: IconUsers,
+  speakers: IconUsers,
   area: IconArea,
   screen: IconDisplay4K,
   display: IconDisplay4K,
@@ -174,29 +205,39 @@ const FEATURE_ICONS = {
   camera: IconVideoCamera,
   wifi: IconWifi,
   acoustics: IconSoundWaves,
+  audio: IconSoundWaves,
   climate: IconThermometer,
   whiteboard: IconWhiteboard,
+  light: IconLightning,
+  blinds: IconBlinds,
+  hotdog: IconHotDog,
 };
 
 function toMinutes(time) {
-  const [h, m] = String(time ?? '').split(':').map(Number);
+  const [h, m] = String(time ?? "")
+    .split(":")
+    .map(Number);
   return Number.isFinite(h) && Number.isFinite(m) ? h * 60 + m : NaN;
 }
 
 function toTime(minutes) {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-const timelineStart = computed(() => props.resource.timelineStart || '');
-const timelineEnd = computed(() => props.resource.timelineEnd || '');
+const timelineStart = computed(() => props.resource.timelineStart || "");
+const timelineEnd = computed(() => props.resource.timelineEnd || "");
 const bookings = computed(() => props.resource.bookings || []);
-const hasTimeline = computed(() => Boolean(timelineStart.value && timelineEnd.value));
+const hasTimeline = computed(() =>
+  Boolean(timelineStart.value && timelineEnd.value),
+);
 
 const features = computed(() =>
   (props.resource.features || []).map((f) =>
-    typeof f === 'string' ? { icon: '', label: f } : { icon: f.icon || '', label: f.label || '' },
+    typeof f === "string"
+      ? { icon: "", label: f }
+      : { icon: f.icon || "", label: f.label || "" },
   ),
 );
 
@@ -204,26 +245,34 @@ const primaryFeatures = computed(() => features.value.slice(0, 3));
 
 const secondaryFeatures = computed(() => features.value.slice(3));
 
-const locationShort = computed(() => props.resource.location || '');
+const locationShort = computed(() => props.resource.location || "");
 
 const description = computed(() => {
   if (props.resource.description) return props.resource.description;
   const parts = [];
-  if (props.resource.capacity) parts.push(`Вместимость до ${props.resource.capacity} человек`);
-  return parts.join(' • ');
+  if (props.resource.capacity)
+    parts.push(`Вместимость до ${props.resource.capacity} человек`);
+  return parts.join(" • ");
 });
 
 const dayBounds = computed(() => {
   const start = toMinutes(timelineStart.value);
   const end = toMinutes(timelineEnd.value);
-  return Number.isFinite(start) && Number.isFinite(end) && start < end ? { start, end } : null;
+  return Number.isFinite(start) && Number.isFinite(end) && start < end
+    ? { start, end }
+    : null;
 });
 
 const busyIntervals = computed(() => {
   if (!dayBounds.value) return [];
   const intervals = bookings.value
     .map((b) => ({ start: toMinutes(b.start), end: toMinutes(b.end) }))
-    .filter((iv) => Number.isFinite(iv.start) && Number.isFinite(iv.end) && iv.start < iv.end)
+    .filter(
+      (iv) =>
+        Number.isFinite(iv.start) &&
+        Number.isFinite(iv.end) &&
+        iv.start < iv.end,
+    )
     .sort((a, b) => a.start - b.start);
 
   const merged = [];
@@ -249,25 +298,34 @@ const hasFreeTime = computed(() => {
 
 const statusText = computed(() => {
   const day = dayBounds.value;
-  if (!day) return 'Нет расписания';
+  if (!day) return "Нет расписания";
   const busy = busyIntervals.value;
-  if (!busy.length) return 'Свободно весь день';
-  if (busy.length === 1 && busy[0].start <= day.start && busy[0].end >= day.end) {
-    return 'Занято весь день';
+  if (!busy.length) return "Свободно весь день";
+  if (
+    busy.length === 1 &&
+    busy[0].start <= day.start &&
+    busy[0].end >= day.end
+  ) {
+    return "Занято весь день";
   }
   if (busy[0].start <= day.start) return `Занято до ${toTime(busy[0].end)}`;
   return `Свободен до ${toTime(busy[0].start)}`;
 });
 
 const statusTone = computed(() =>
-  statusText.value.startsWith('Занято') ? 'busy' : 'free',
+  statusText.value.startsWith("Занято") ? "busy" : "free",
 );
 
-const availabilityTone = computed(() => (statusTone.value === 'busy' ? 'danger' : 'success'));
-
-const availabilityText = computed(() =>
-  statusTone.value === 'busy' ? statusText.value : 'Доступно сейчас',
+const availabilityTone = computed(() =>
+  statusTone.value === "busy" ? "danger" : "success",
 );
+
+const isMeetingRoom = computed(() => /переговорн/i.test(String(props.resource.category || "")));
+
+const availabilityText = computed(() => {
+  if (statusTone.value === "busy") return statusText.value;
+  return isMeetingRoom.value ? "Доступно" : "Доступно сейчас";
+});
 
 const hasBookableSlot = computed(() => hasFreeTime.value);
 </script>
@@ -295,16 +353,16 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
 /* Раскладка */
 .resource-card--grid {
   grid-template-areas:
-    'media'
-    'body'
-    'timeline'
-    'footer';
+    "media"
+    "body"
+    "timeline"
+    "footer";
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr auto auto;
 }
 
 .resource-card--list {
-  grid-template-areas: 'media body timeline footer';
+  grid-template-areas: "media body timeline footer";
   grid-template-columns: 190px minmax(0, 1fr) 240px 176px;
   padding: 12px;
 }
@@ -358,7 +416,11 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
   width: 100%;
   height: 100%;
   color: var(--color-text-muted);
-  background: linear-gradient(135deg, var(--color-surface-subtle), var(--color-surface-hover));
+  background: linear-gradient(
+    135deg,
+    var(--color-surface-subtle),
+    var(--color-surface-hover)
+  );
 }
 
 .resource-card__category {

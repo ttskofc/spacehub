@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import CatalogView from '../views/CatalogView.vue';
 import BookingsView from '../views/BookingsView.vue';
 import CalendarView from '../views/CalendarView.vue';
+import GalleryView from '../views/GalleryView.vue';
 
 const routes = [
   {
@@ -18,6 +19,11 @@ const routes = [
     path: '/calendar',
     name: 'calendar',
     component: CalendarView,
+  },
+  {
+    path: '/gallery',
+    name: 'gallery',
+    component: GalleryView,
   },
   {
     path: '/:pathMatch(.*)*',

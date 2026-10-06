@@ -8,6 +8,7 @@
           <NavItem to="/" label="Каталог ресурсов" :icon="IconGrid" :count="4" badge-variant="matcha" />
           <NavItem to="/bookings" label="Мои бронирования" :icon="IconCalendarMonth" :count="2" badge-variant="matcha" />
           <NavItem to="/calendar" label="Календарь" :icon="IconCalendarCheck" />
+          <NavItem to="/gallery" label="UI-кит" :icon="IconSliders" />
         </NavSection>
       </nav>
     </div>
@@ -31,6 +32,7 @@ import AppUserCard from './AppUserCard.vue';
 import IconGrid from '../ui/Icons/Shell&Navigation/IconGrid.vue';
 import IconCalendarMonth from '../ui/Icons/Shell&Navigation/IconCalendarMonth.vue';
 import IconCalendarCheck from '../ui/Icons/Shell&Navigation/IconCalendarCheck.vue';
+import IconSliders from '../ui/Icons/Catalog Controls/IconSliders.vue';
 import { useUserStore } from '../../stores/user';
 
 const emit = defineEmits(['user-menu']);

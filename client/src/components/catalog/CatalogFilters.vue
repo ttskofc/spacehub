@@ -131,15 +131,6 @@ const props = defineProps({
       { value: 'name', label: 'По названию' },
     ],
   },
-  sortOptions: {
-    type: Array,
-    default: () => [
-      { value: 'capacity_desc', label: 'По вместимости (убыв.)' },
-      { value: 'capacity_asc', label: 'По вместимости (возр.)' },
-      { value: 'popular', label: 'По популярности' },
-      { value: 'name', label: 'По названию' },
-    ],
-  },
   searchPlaceholder: {
     type: String,
     default: 'Поиск по названию, этажу, опциям...',
