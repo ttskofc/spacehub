@@ -152,6 +152,10 @@ export const useCatalogStore = defineStore('catalog', () => {
       : [...bookmarks.value, id];
   }
 
+  function getResource(id) {
+    return cards.value.find((resource) => resource.id === id) ?? null;
+  }
+
   function resetFilters() {
     filters.value = { ...DEFAULT_FILTERS };
     page.value = 1;
@@ -212,6 +216,7 @@ export const useCatalogStore = defineStore('catalog', () => {
     loadSlots,
     reload,
     toggleBookmark,
+    getResource,
     resetFilters,
     setPage,
     setPageSize,

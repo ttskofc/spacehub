@@ -76,7 +76,7 @@ const props = defineProps({
   },
 
 
-    // status: 'busy' | 'pending' | 'maintenance' | 'free' (по умолчанию 'busy')
+    // status: 'busy' | 'pending' | 'service' | 'free' (по умолчанию 'busy')
   freeLabel: {
     type: String,
     default: 'Свободно',
@@ -95,9 +95,9 @@ const props = defineProps({
   },
 });
 
-const VALID_STATUSES = ['busy', 'pending', 'maintenance', 'free'];
+const VALID_STATUSES = ['busy', 'pending', 'service', 'free'];
 
-const STATUS_PRIORITY = ['maintenance', 'busy', 'pending', 'free'];
+const STATUS_PRIORITY = ['service', 'busy', 'pending', 'free'];
 
 function toMinutes(timeStr) {
   const [h, m] = String(timeStr ?? '').split(':').map(Number);
@@ -117,7 +117,7 @@ function normalizeStatus(booking) {
 function statusLabel(status) {
   if (status === 'free') return props.freeLabel;
   if (status === 'pending') return props.pendingLabel;
-  if (status === 'maintenance') return props.maintenanceLabel;
+  if (status === 'service') return props.maintenanceLabel;
   return props.busyLabel;
 }
 
@@ -194,11 +194,11 @@ const currentStatusText = computed(() => {
 
 
 const trackSummary = computed(() => {
-  const counts = { free: 0, busy: 0, pending: 0, maintenance: 0 };
+  const counts = { free: 0, busy: 0, pending: 0, service: 0 };
   for (const s of computedSlots.value) counts[s.status] += 1;
 
   const parts = [];
-  if (counts.maintenance > 0) parts.push(`${counts.maintenance} ${props.maintenanceLabel.toLowerCase()}`);
+  if (counts.service > 0) parts.push(`${counts.service} ${props.maintenanceLabel.toLowerCase()}`);
   if (counts.pending > 0) parts.push(`${counts.pending} ${props.pendingLabel.toLowerCase()}`);
   if (counts.busy > 0) parts.push(`${counts.busy} ${props.busyLabel.toLowerCase()}`);
   if (counts.free > 0) parts.push(`${counts.free} ${props.freeLabel.toLowerCase()}`);
@@ -254,6 +254,7 @@ const trackSummary = computed(() => {
   color: var(--color-warning-text);
 }
 
+.mini-timeline__status--service,
 .mini-timeline__status--maintenance {
   border-color: var(--color-neutral-border);
   background-color: var(--color-neutral-bg);
@@ -292,6 +293,7 @@ const trackSummary = computed(() => {
   background-color: var(--color-warning-soft);
 }
 
+.mini-timeline__segment--service,
 .mini-timeline__segment--maintenance {
   background-color: var(--color-neutral-soft);
 }

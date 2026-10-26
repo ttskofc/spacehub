@@ -7,9 +7,9 @@
 
     <div class="view-page__timeline">
       <AppTimeline
-        workDayStart="10:00"
-        workDayEnd="20:00"
-        :slot-duration-minutes="60"
+        :work-day-start="resource?.timelineStart || '09:00'"
+        :work-day-end="resource?.timelineEnd || '19:00'"
+        :slot-duration-minutes="resource?.slotDurationMinutes || resource?.stepMinutes || resource?.step_minutes || 60"
         :bookings="bookings"
       />
     </div>
@@ -17,22 +17,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import AppTimeline from '../components/ui/AppTimeline.vue';
+import { useCatalogStore } from '../stores/catalog';
+import { apiGet } from '../api/http';
 
-const bookings = ref([
-  {
-    start: '14:00',
-    end: '16:00',
-    title: 'Идет звукозапись',
-  },
-  {
-    start: '16:00',
-    end: '19:00',
-    title: 'Уборка и проветривание',
-    status: 'maintenance',
-  },
-]);
+const catalog = useCatalogStore();
+const bookings = ref([]);
+const resource = computed(() => catalog.cards[0] ?? null);
+
+onMounted(async () => {
+  if (!catalog.resources.length) await catalog.load();
+  if (!resource.value?.id) return;
+  const value = await apiGet('/slots', { resource_id: resource.value.id });
+  bookings.value = Array.isArray(value) ? value : [];
+});
 </script>
 
 <style scoped>

@@ -72,6 +72,7 @@
 
 <script setup>
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import AppButton from '../components/ui/AppButton.vue';
 import AppPagination from '../components/ui/AppPagination.vue';
@@ -81,6 +82,7 @@ import ResourceCard from '../components/catalog/ResourceCard.vue';
 import { useCatalogStore } from '../stores/catalog';
 
 const catalog = useCatalogStore();
+const router = useRouter();
 const { pageSize } = storeToRefs(catalog);
 
 onMounted(() => catalog.load());
@@ -89,12 +91,12 @@ async function reload() {
   await catalog.reload();
 }
 
-function onBook() {
-  // Форма бронирования появится следующим шагом, каталог пока только читает 1С
+function onBook(resource) {
+  router.push({ name: 'resource-detail', params: { id: resource.id } });
 }
 
-function onDetails() {
-  // Деталка ресурса пока не реализована
+function onDetails(resource) {
+  router.push({ name: 'resource-detail', params: { id: resource.id } });
 }
 </script>
 

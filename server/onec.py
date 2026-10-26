@@ -74,7 +74,10 @@ class OneCClient:
                 failure = exc
             else:
                 if response.status_code >= 400:
-                    raise OneCHttpError(response.status_code, _extract_detail(response))
+                    raise OneCHttpError(
+                        response.status_code,
+                        _extract_detail(response) or "1С не вернула текст ошибки",
+                    )
 
                 if not response.content:
                     return None

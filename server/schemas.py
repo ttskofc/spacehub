@@ -12,7 +12,7 @@ class ResourceFeature(BaseModel):
 
 
 class Booking(BaseModel):
-    """Занятый интервал для мини-таймлайна карточки."""
+    """Интервал расписания и его отображаемые данные."""
 
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
 
@@ -20,6 +20,14 @@ class Booking(BaseModel):
     end: str = ""
     status: str = "busy"
     title: str = ""
+    description: str = ""
+
+
+class GalleryImage(BaseModel):
+    model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+
+    url: str = ""
+    caption: str = ""
 
 
 class Resource(BaseModel):
@@ -35,9 +43,16 @@ class Resource(BaseModel):
     capacity: int | None = None
     area: float | None = None
     image_url: str = ""
+    gallery: list[GalleryImage] = Field(default_factory=list)
     description: str = ""
     features: list[ResourceFeature] = Field(default_factory=list)
     timeline_start: str = ""
     timeline_end: str = ""
+    slot_duration_minutes: int = 60
     bookings: list[Booking] = Field(default_factory=list)
     instant_booking: bool = False
+    rules: list[str] = Field(default_factory=list)
+    telemetry: str = ""
+    tour_url: str = ""
+    usage_percent: int | None = None
+    peak_hour: str = ""

@@ -120,12 +120,6 @@
         variant="clean"
         :options="paginationOptions"
       />
-      <AppSelect
-        v-model="roomValue"
-        label="Временной слот"
-        :options="bookingOptions"
-        error="Обязательное поле"
-      />
       <AppSelect v-model="disabledValue" :options="sortOptions" disabled />
     </div>
 
@@ -186,7 +180,6 @@
         label="Бронирования"
         :icon="IconCalendarMonth"
         badge-variant="warning"
-        :count="2"
       />
       <NavItem to="/calendar" label="Календарь" :icon="IconCalendarCheck" />
     </div>
@@ -291,15 +284,6 @@ const capacityValue = ref("zarya");
 
 const paginationOptions = [6, 12, 24];
 const paginationValue = ref(12);
-
-const bookingOptions = [
-  { label: "10:00 — 11:00", value: "10-11", matcha: true, badge: "Доступно" },
-  { label: "11:30 — 12:30", value: "11-12", matcha: true, badge: "Доступно" },
-  { label: "13:00 — 14:00", value: "13-14", matcha: true, badge: "Доступно" },
-  { label: "14:30 — 15:30", value: "14-15", disabled: true, badge: "Занято" },
-  { label: "16:00 — 17:00", value: "16-17", matcha: true, badge: "Доступно" },
-];
-const roomValue = ref("13-14");
 
 const disabledValue = ref(null);
 

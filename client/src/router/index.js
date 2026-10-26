@@ -3,6 +3,7 @@ import CatalogView from '../views/CatalogView.vue';
 import BookingsView from '../views/BookingsView.vue';
 import CalendarView from '../views/CalendarView.vue';
 import GalleryView from '../views/GalleryView.vue';
+import ResourceDetailView from '../views/ResourceDetailView.vue';
 
 const routes = [
   {
@@ -24,6 +25,11 @@ const routes = [
     path: '/gallery',
     name: 'gallery',
     component: GalleryView,
+  },
+  {
+    path: '/resources/:id',
+    name: 'resource-detail',
+    component: ResourceDetailView,
   },
   {
     path: '/:pathMatch(.*)*',

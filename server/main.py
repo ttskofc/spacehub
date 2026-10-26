@@ -60,7 +60,10 @@ async def handle_onec_unavailable(request: Request, exc: OneCUnavailable) -> JSO
 @app.exception_handler(OneCHttpError)
 async def handle_onec_http_error(request: Request, exc: OneCHttpError) -> JSONResponse:
     logger.warning("1С ответила ошибкой %s на %s: %s", exc.status_code, request.url.path, exc.detail)
-    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={"detail": exc.detail, "source": "onec"},
+    )
 
 
 @app.get("/health")
@@ -92,7 +95,7 @@ async def get_slots(
 
 @app.post("/api/bookings")
 async def create_booking(payload: dict[str, Any], onec: OneCDep) -> Any:
-    """Контракт POST /bookings 1С пока не описан — тело проксируется как есть."""
+    """Проксирует тело бронирования в HTTP-сервис 1С."""
     return await onec.post_json("/bookings", payload)
 
 

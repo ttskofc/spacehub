@@ -110,6 +110,7 @@
       <AppTimeline
         :work-day-start="timelineStart"
         :work-day-end="timelineEnd"
+        :slot-duration-minutes="resource.slotDurationMinutes || resource.stepMinutes || resource.step_minutes || 60"
         :bookings="bookings"
       />
     </div>
@@ -266,6 +267,7 @@ const dayBounds = computed(() => {
 const busyIntervals = computed(() => {
   if (!dayBounds.value) return [];
   const intervals = bookings.value
+    .filter((b) => b.status !== "free")
     .map((b) => ({ start: toMinutes(b.start), end: toMinutes(b.end) }))
     .filter(
       (iv) =>

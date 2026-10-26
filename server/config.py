@@ -7,7 +7,6 @@ ENV_FILE = Path(__file__).with_name(".env")
 
 
 def _load_env_file(path: Path = ENV_FILE) -> None:
-    """Минимальный парсер .env, чтобы не тянуть python-dotenv ради пяти переменных."""
     if not path.is_file():
         return
 

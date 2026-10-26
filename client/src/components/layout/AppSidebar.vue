@@ -6,7 +6,7 @@
       <nav class="sidebar__nav">
         <NavSection>
           <NavItem to="/" label="Каталог ресурсов" :icon="IconGrid" :count="4" badge-variant="matcha" />
-          <NavItem to="/bookings" label="Мои бронирования" :icon="IconCalendarMonth" :count="2" badge-variant="matcha" />
+          <NavItem to="/bookings" label="Мои бронирования" :icon="IconCalendarMonth" />
           <NavItem to="/calendar" label="Календарь" :icon="IconCalendarCheck" />
           <NavItem to="/gallery" label="UI-кит" :icon="IconSliders" />
         </NavSection>
