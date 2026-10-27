@@ -72,7 +72,7 @@
                   :size="14"
                 />
               </span>
-              {{ feature.label }}
+              <span class="resource-card__feature-hero-label">{{ feature.label }}</span>
             </span>
             <span
               v-if="index < primaryFeatures.length - 1"
@@ -100,7 +100,7 @@
                 :size="11"
               />
             </span>
-            {{ feature.label }}
+            <span class="resource-card__feature-label">{{ feature.label }}</span>
           </span>
         </div>
       </div>
@@ -166,7 +166,6 @@ import AppButton from "../ui/AppButton.vue";
 import AppBadge from "../ui/AppBadge.vue";
 import AppTimeline from "../ui/AppTimeline.vue";
 import IconArrowRight from "../ui/Icons/Calendar & Booking Actions/IconArrowRight.vue";
-import IconArea from "../ui/Icons/Icon Features & Specs/IconArea.vue";
 import IconCheck from "../ui/Icons/Catalog Controls/IconCheck.vue";
 import IconMapPin from "../ui/Icons/Catalog Controls/IconMapPin.vue";
 import IconBlinds from "../ui/Icons/Icon Features & Specs/IconBlinds.vue";
@@ -175,12 +174,27 @@ import IconLightning from "../ui/Icons/Icon Features & Specs/IconLightning.vue";
 import IconGrid from "../ui/Icons/Shell&Navigation/IconGrid.vue";
 import IconBookmark from "../ui/Icons/Calendar & Booking Actions/IconBookmark.vue";
 import IconSoundWaves from "../ui/Icons/Icon Features & Specs/IconSoundWaves.vue";
-import IconThermometer from "../ui/Icons/Icon Features & Specs/IconThermometer.vue";
 import IconUsers from "../ui/Icons/Icon Features & Specs/IconUsers.vue";
 import IconVideoCamera from "../ui/Icons/Icon Features & Specs/IconVideoCamera.vue";
 import IconWhiteboard from "../ui/Icons/Icon Features & Specs/IconWhiteboard.vue";
 import IconWifi from "../ui/Icons/Icon Features & Specs/IconWifi.vue";
 import IconHotDog from "../ui/Icons/IconHotDog.vue";
+import IconVR from "../ui/Icons/Icon Features & Specs/IconVR.vue";
+import IconDrawingBoard from "../ui/Icons/Icon Features & Specs/IconDrawingBoard.vue";
+import IconClimateControl from "../ui/Icons/Icon Features & Specs/IconClimateControl.vue";
+import IconPcComponents from "../ui/Icons/Icon Features & Specs/IconPcComponents.vue";
+import IconCoffeeZone from "../ui/Icons/Icon Features & Specs/IconCoffeeZone.vue";
+import IconSeat from "../ui/Icons/Icon Features & Specs/IconSeat.vue";
+import IconPowerSocket from "../ui/Icons/Icon Features & Specs/IconPowerSocket.vue";
+import IconSuitcase from "../ui/Icons/Icon Features & Specs/IconSuitcase.vue";
+import IconAreaFilled from "../ui/Icons/Icon Features & Specs/IconAreaFilled.vue";
+import IconLaptop from "../ui/Icons/Icon Features & Specs/IconLaptop.vue";
+import IconLock from "..//ui/Icons/Icon Features & Specs/IconLock.vue"
+import { isNonCountableResource } from "../../utils/resourceCategory.js";
+import IconDesk from "../ui/Icons/Icon Features & Specs/IconDesk.vue";
+import IconScene from "../ui/Icons/Icon Features & Specs/IconScene.vue";
+
+const CAPACITY_LIKE_ICONS = new Set(["capacity", "speakers", "area"]);
 
 const props = defineProps({
   resource: {
@@ -199,7 +213,7 @@ const emit = defineEmits(["book", "details", "toggle-bookmark"]);
 const FEATURE_ICONS = {
   capacity: IconUsers,
   speakers: IconUsers,
-  area: IconArea,
+  area: IconAreaFilled,
   screen: IconDisplay4K,
   display: IconDisplay4K,
   vcs: IconVideoCamera,
@@ -207,11 +221,22 @@ const FEATURE_ICONS = {
   wifi: IconWifi,
   acoustics: IconSoundWaves,
   audio: IconSoundWaves,
-  climate: IconThermometer,
+  climate: IconClimateControl,
   whiteboard: IconWhiteboard,
   light: IconLightning,
   blinds: IconBlinds,
-  hotdog: IconHotDog,
+  lock: IconLock,
+  desk: IconDesk,
+  vr: IconVR,
+  drawing: IconDrawingBoard,
+  pc: IconPcComponents,
+  coffee: IconCoffeeZone,
+  seat: IconSeat,
+  power: IconPowerSocket,
+  luggage: IconSuitcase,
+  laptop: IconLaptop,
+  scene: IconScene,
+  check: IconCheck,
 };
 
 function toMinutes(time) {
@@ -234,24 +259,47 @@ const hasTimeline = computed(() =>
   Boolean(timelineStart.value && timelineEnd.value),
 );
 
+const countable = computed(() => !isNonCountableResource(props.resource));
+
 const features = computed(() =>
-  (props.resource.features || []).map((f) =>
-    typeof f === "string"
-      ? { icon: "", label: f }
-      : { icon: f.icon || "", label: f.label || "" },
-  ),
+  (props.resource.features || [])
+    .map((f) =>
+      typeof f === "string"
+        ? { icon: "", label: f }
+        : { icon: f.icon || "", label: f.label || "" },
+    )
+    .filter((f) => countable.value || !CAPACITY_LIKE_ICONS.has(f.icon)),
 );
 
-const primaryFeatures = computed(() => features.value.slice(0, 3));
+const HERO_MAX_ITEMS = 3;
+const HERO_LONG_LABEL = 14;
+const HERO_MAX_LABEL_TOTAL = 30;
 
-const secondaryFeatures = computed(() => features.value.slice(3));
+const heroCount = computed(() => {
+  const candidates = features.value.slice(0, HERO_MAX_ITEMS);
+  if (!candidates.length) return 0;
+  let total = 0;
+  let count = 0;
+  for (const feature of candidates) {
+    const length = String(feature.label ?? "").length;
+    if (length > HERO_LONG_LABEL) break;
+    if (count > 0 && total + length > HERO_MAX_LABEL_TOTAL) break;
+    total += length;
+    count += 1;
+  }
+  return Math.max(1, count);
+});
+
+const primaryFeatures = computed(() => features.value.slice(0, heroCount.value));
+
+const secondaryFeatures = computed(() => features.value.slice(heroCount.value));
 
 const locationShort = computed(() => props.resource.location || "");
 
 const description = computed(() => {
   if (props.resource.description) return props.resource.description;
   const parts = [];
-  if (props.resource.capacity)
+  if (countable.value && props.resource.capacity)
     parts.push(`Вместимость до ${props.resource.capacity} человек`);
   return parts.join(" • ");
 });
@@ -564,9 +612,11 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 5px 10px;
   width: 100%;
+  min-width: 0;
+  overflow: hidden;
   padding: 8px 14px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -576,14 +626,25 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
 .resource-card__feature-hero-item {
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 5px;
+  min-width: 0;
+  max-width: 100%;
   font-size: 12px;
   font-weight: 500;
   color: var(--color-pagination-text);
   white-space: nowrap;
 }
 
+.resource-card__feature-hero-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .resource-card__feature-hero-dot {
+  flex-shrink: 0;
   color: var(--color-text-muted);
   font-size: 10px;
 }
@@ -599,6 +660,8 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
 .resource-card__feature {
   display: inline-flex;
   align-items: center;
+  max-width: 100%;
+  min-width: 0;
   gap: 4px;
   padding: 2px 8px;
   border: 1px solid var(--color-border);
@@ -606,6 +669,13 @@ const hasBookableSlot = computed(() => hasFreeTime.value);
   background: var(--color-surface-subtle);
   font-size: 11px;
   color: var(--color-pagination-text);
+}
+
+.resource-card__feature-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .resource-card__feature-icon {

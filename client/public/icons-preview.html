@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>Icon preview</title>
+  <style>
+    body { margin: 0; padding: 24px; font-family: system-ui, sans-serif; background: #fff; color: #670626; }
+    .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 28px; }
+    .card { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+    .row { display: flex; align-items: center; gap: 16px; }
+    .name { font-size: 12px; color: #564244; }
+    .sizes { display: flex; align-items: flex-end; gap: 10px; }
+  </style>
+</head>
+<body>
+  <div class="grid" id="grid"></div>
+  <script type="module">
+    import IconVR from '/src/components/ui/Icons/Icon Features & Specs/IconVR.vue';
+    import IconDrawingBoard from '/src/components/ui/Icons/Icon Features & Specs/IconDrawingBoard.vue';
+    import IconClimateControl from '/src/components/ui/Icons/Icon Features & Specs/IconClimateControl.vue';
+    import IconPcComponents from '/src/components/ui/Icons/Icon Features & Specs/IconPcComponents.vue';
+    import IconCoffeeZone from '/src/components/ui/Icons/Icon Features & Specs/IconCoffeeZone.vue';
+    import IconSeat from '/src/components/ui/Icons/Icon Features & Specs/IconSeat.vue';
+    import IconPowerSocket from '/src/components/ui/Icons/Icon Features & Specs/IconPowerSocket.vue';
+    import IconSuitcase from '/src/components/ui/Icons/Icon Features & Specs/IconSuitcase.vue';
+    import IconAreaFilled from '/src/components/ui/Icons/Icon Features & Specs/IconAreaFilled.vue';
+    import IconLaptop from '/src/components/ui/Icons/Icon Features & Specs/IconLaptop.vue';
+    import { createApp, h } from 'vue';
+
+    const icons = {
+      IconVR, IconDrawingBoard, IconClimateControl, IconPcComponents, IconCoffeeZone,
+      IconSeat, IconPowerSocket, IconSuitcase, IconAreaFilled, IconLaptop,
+    };
+
+    const grid = document.getElementById('grid');
+    for (const [name, comp] of Object.entries(icons)) {
+      const card = document.createElement('div');
+      card.className = 'card';
+      const sizes = document.createElement('div');
+      sizes.className = 'sizes';
+      createApp({ render: () => h('div', { class: 'sizes' }, [
+        h(comp, { size: 14 }),
+        h(comp, { size: 20 }),
+        h(comp, { size: 32 }),
+        h(comp, { size: 48 }),
+      ]) }).mount(sizes);
+      const label = document.createElement('div');
+      label.className = 'name';
+      label.textContent = name;
+      card.append(sizes, label);
+      grid.append(card);
+    }
+  </script>
+</body>
+</html>

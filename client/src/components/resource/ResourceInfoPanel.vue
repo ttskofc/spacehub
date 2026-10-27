@@ -11,10 +11,10 @@
       </div>
     </div>
 
-    <section v-if="features.length" class="resource-info__section">
-      <div class="resource-info__section-head"><h2>Оснащение и сервисы</h2><span>{{ features.length }}</span></div>
+    <section v-if="visibleFeatures.length" class="resource-info__section">
+      <div class="resource-info__section-head"><h2>Оснащение и сервисы</h2><span>{{ visibleFeatures.length }}</span></div>
       <div class="resource-info__chips">
-        <AppChip v-for="feature in features" :key="feature.label" :label="feature.label" :icon="featureIcon(feature.icon)" variant="matcha" size="sm" />
+        <AppChip v-for="feature in visibleFeatures" :key="feature.label" :label="feature.label" :icon="featureIcon(feature.icon)" variant="matcha" size="sm" />
       </div>
     </section>
 
@@ -28,24 +28,86 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import AppChip from '../ui/AppChip.vue';
-import IconArea from '../ui/Icons/Icon Features & Specs/IconArea.vue';
+import { isNonCountableResource } from '../../utils/resourceCategory.js';
+import IconAreaFilled from '../ui/Icons/Icon Features & Specs/IconAreaFilled.vue';
 import IconUsers from '../ui/Icons/Icon Features & Specs/IconUsers.vue';
 import IconMapPin from '../ui/Icons/Catalog Controls/IconMapPin.vue';
 import IconDisplay4K from '../ui/Icons/Icon Features & Specs/IconDisplay4K.vue';
 import IconWifi from '../ui/Icons/Icon Features & Specs/IconWifi.vue';
 import IconSoundWaves from '../ui/Icons/Icon Features & Specs/IconSoundWaves.vue';
+import IconVideoCamera from '../ui/Icons/Icon Features & Specs/IconVideoCamera.vue';
+import IconWhiteboard from '../ui/Icons/Icon Features & Specs/IconWhiteboard.vue';
+import IconLightning from '../ui/Icons/Icon Features & Specs/IconLightning.vue';
+import IconBlinds from '../ui/Icons/Icon Features & Specs/IconBlinds.vue';
+import IconHotDog from '../ui/Icons/IconHotDog.vue';
+import IconVR from '../ui/Icons/Icon Features & Specs/IconVR.vue';
+import IconDrawingBoard from '../ui/Icons/Icon Features & Specs/IconDrawingBoard.vue';
+import IconClimateControl from '../ui/Icons/Icon Features & Specs/IconClimateControl.vue';
+import IconPcComponents from '../ui/Icons/Icon Features & Specs/IconPcComponents.vue';
+import IconCoffeeZone from '../ui/Icons/Icon Features & Specs/IconCoffeeZone.vue';
+import IconSeat from '../ui/Icons/Icon Features & Specs/IconSeat.vue';
+import IconPowerSocket from '../ui/Icons/Icon Features & Specs/IconPowerSocket.vue';
+import IconSuitcase from '../ui/Icons/Icon Features & Specs/IconSuitcase.vue';
+import IconLaptop from '../ui/Icons/Icon Features & Specs/IconLaptop.vue';
+import IconLock from '../ui/Icons/Icon Features & Specs/IconLock.vue';
+import IconDesk from '../ui/Icons/Icon Features & Specs/IconDesk.vue';
+import IconScene from '../ui/Icons/Icon Features & Specs/IconScene.vue';
+import IconCheck from '../ui/Icons/Catalog Controls/IconCheck.vue';
+
+const CAPACITY_LIKE_ICONS = new Set(['capacity', 'speakers']);
+const AREA_LIKE_ICONS = new Set(['area']);
 
 const props = defineProps({ resource: { type: Object, required: true } });
-const specs = [
-  { label: 'Вместимость', value: props.resource.capacity ? `до ${props.resource.capacity} чел.` : 'Не указана', icon: IconUsers },
+const countable = computed(() => !isNonCountableResource(props.resource));
+const specs = computed(() => [
+  ...(countable.value
+    ? [
+        { label: 'Вместимость', value: props.resource.capacity ? `до ${props.resource.capacity} чел.` : 'Не указана', icon: IconUsers },
+        { label: 'Площадь', value: props.resource.area ? `${props.resource.area} м²` : 'Не указана', icon: IconAreaFilled },
+      ]
+    : []),
   { label: 'Локация', value: props.resource.location || 'Не указана', icon: IconMapPin },
-  { label: 'Площадь', value: props.resource.area ? `${props.resource.area} м²` : 'Не указана', icon: IconArea },
   { label: 'Формат', value: props.resource.category || 'Ресурс', icon: IconDisplay4K },
-];
-const features = props.resource.features ?? [];
+]);
+const visibleFeatures = computed(() =>
+  (props.resource.features ?? []).filter(
+    (feature) =>
+      countable.value ||
+      !(CAPACITY_LIKE_ICONS.has(feature.icon) || AREA_LIKE_ICONS.has(feature.icon)),
+  ),
+);
 const rules = props.resource.rules ?? [];
-const icons = { wifi: IconWifi, acoustics: IconSoundWaves, audio: IconSoundWaves, screen: IconDisplay4K, display: IconDisplay4K };
+const icons = {
+  capacity: IconUsers,
+  speakers: IconUsers,
+  area: IconAreaFilled,
+  screen: IconDisplay4K,
+  display: IconDisplay4K,
+  vcs: IconVideoCamera,
+  camera: IconVideoCamera,
+  wifi: IconWifi,
+  acoustics: IconSoundWaves,
+  audio: IconSoundWaves,
+  climate: IconClimateControl,
+  whiteboard: IconWhiteboard,
+  light: IconLightning,
+  blinds: IconBlinds,
+  hotdog: IconHotDog,
+  vr: IconVR,
+  drawing: IconDrawingBoard,
+  pc: IconPcComponents,
+  coffee: IconCoffeeZone,
+  seat: IconSeat,
+  power: IconPowerSocket,
+  luggage: IconSuitcase,
+  laptop: IconLaptop,
+  lock: IconLock,
+  desk: IconDesk,
+  scene: IconScene,
+  check: IconCheck,
+};
 function featureIcon(icon) { return icons[icon] ?? null; }
 </script>
 

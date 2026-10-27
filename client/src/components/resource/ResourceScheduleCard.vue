@@ -10,9 +10,6 @@
     </div>
     <div class="schedule-card__toolbar">
       <AppButton variant="secondary" size="sm" @click="setToday">Сегодня</AppButton>
-      <div class="schedule-card__modes" role="group" aria-label="Масштаб расписания">
-        <button v-for="mode in modes" :key="mode.value" type="button" :class="{ active: viewMode === mode.value }" @click="viewMode = mode.value">{{ mode.label }}</button>
-      </div>
     </div>
     <div class="schedule-card__legend">
       <span v-for="item in legend" :key="item.label"><i :class="`dot dot--${item.tone}`"></i>{{ item.label }}</span>
@@ -60,8 +57,6 @@ const props = defineProps({
 });
 const emit = defineEmits(['select', 'date-change']);
 const selectedDate = ref(new Date());
-const viewMode = ref('day');
-const modes = [{ value: 'day', label: 'День' }, { value: 'week', label: 'Неделя' }, { value: 'month', label: 'Месяц' }];
 const legend = [{ label: 'Свободно', tone: 'free' }, { label: 'Выбрано', tone: 'selected' }, { label: 'В обработке', tone: 'pending' }, { label: 'Занято', tone: 'busy' }, { label: 'Сервис', tone: 'service' }];
 const duration = computed(() => {
   const value = Number(props.slotDuration);
@@ -150,9 +145,6 @@ h2 { margin: 0; font-family: var(--font-heading); font-size: 22px; color: var(--
 .schedule-card__date-actions { display: flex; align-items: center; gap: 4px; }
 .schedule-card__date { border: 0; background: transparent; color: var(--color-text-main); font-weight: 600; cursor: pointer; }
 .schedule-card__toolbar { margin-top: 18px; }
-.schedule-card__modes { display: flex; padding: 3px; border-radius: var(--radius-sm); background: var(--color-surface-subtle); }
-.schedule-card__modes button { padding: 6px 10px; border: 0; border-radius: var(--radius-xs); background: transparent; color: var(--color-text-secondary); cursor: pointer; }
-.schedule-card__modes button.active { background: var(--color-primary); color: #fff; }
 .schedule-card__legend { justify-content: flex-start; flex-wrap: wrap; margin: 18px 0 12px; color: var(--color-text-muted); font-size: 11px; }
 .schedule-card__legend span { display: inline-flex; align-items: center; gap: 5px; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-neutral); }.dot--free { background: var(--color-success); }.dot--selected { background: var(--color-primary); }.dot--pending { background: var(--color-warning); }.dot--busy { background: var(--color-danger); }.dot--service { background: var(--color-neutral); }

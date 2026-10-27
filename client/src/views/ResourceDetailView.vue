@@ -28,7 +28,7 @@
       </section>
       <section class="resource-detail__right">
         <ResourceScheduleCard :bookings="bookings" :slot-duration="resource.slotDurationMinutes || resource.stepMinutes || resource.step_minutes || 60" :selected-slot="selectedSlot" :loading="slotsLoading" :error="slotsError" @select="selectedSlot = $event" @date-change="loadBookings" />
-        <ResourceBookingForm :slot="selectedSlot" :user="user" :loading="bookingLoading" @submit="submitBooking" @preview="previewBooking" />
+         <ResourceBookingForm :resource="resource" :slot="selectedSlot" :user="user" :loading="bookingLoading" @submit="submitBooking" @preview="previewBooking" />
       </section>
     </main>
   </div>

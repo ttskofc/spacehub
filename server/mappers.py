@@ -5,6 +5,7 @@ preview_image, equipment[], specifications[]. Галерея 1С не испол
 и занятость не отдаёт — для них подставляются пустые значения, а карточка рисует заглушки.
 """
 
+import re
 from typing import Any
 
 from config import get_settings
@@ -14,21 +15,31 @@ ICON_RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("capacity", ("чел", "мест", "вместим")),
     ("area", ("м²", "м2", "кв. м", "квм")),
     ("display", ("проектор", "projector")),
-    ("screen", ("тв", "экран", "дисплей", "монитор", "led")),
-    ("vcs", ("камер", "webex", "zoom", "teams", "вкс", "видеосвяз", "стрим")),
+    ("screen", (" тв ", "экран", "дисплей", "монитор", " led ")),
+    ("vcs", ("webex", "zoom", "teams", "стриминг", "видеосвяз", "видеоконферен", "poly", "камера", "камеры", "видеокам")),
     ("wifi", ("wi-fi", "wi fi", "wifi")),
-    ("whiteboard", ("доска", "флипчарт", "маркер")),
-    ("acoustics", ("шум", "дб", "db", "акуст", "изоляц")),
+    ("vr", (" vr ", "виар", "виртуальн", "шлем", "meta quest")),
+    ("drawing", ("доска рисования", "доска для рисования", "графическ")),
+    ("pc", ("комплектующ", "системн", "процессор", "видеокарт", "материнск", " rtx ")),
+    ("coffee", ("кофе", "перекус", "чай", "снек")),
+    ("seat", ("кресл", "сиден", "диван", "пуф", "herman miller aeron")),
+    ("power", ("розетк", "провод", "кабел", "заряд", "питани", "удлинит", "type-c")),
+    ("luggage", ("чемодан", "кейс", "багаж")),
+    ("laptop", ("ноутбук", "laptop", "лептоп", "asus")),
     ("climate", ("климат", "температур", "кондиц")),
-    ("speakers", ("спикер", "колонк", "акустическ")),
-    ("audio", ("микрофон", "мик", "shure", "rodecaster", "sennheiser", "звуковой пульт")),
+    ("whiteboard", ("доска", "флипчарт", "маркер")),
+    ("acoustics", ("шум", "акустическ", "изоляц", "дб", "db")),
+    ("speakers", ("спикер", "колонк", "динамик")),
+    ("audio", ("микрофон", "shure sm", "rodecaster", "sennheiser e", "звуковой пульт", "аудиоинтерфейс")),
     ("light", ("софтбокс", "свет", "лайт", "осветит")),
-    ("hotdog", ("кофе", "перекус")),
-    ("blinds", ("сцена")),
+    ("check", ("проверено инжен", "до 3 дней", "тестирование оборудования")),
+    ("lock", ("локер", "замок")),
+    ("desk", ("стол",)),
+    ("scene", ("сцена",)),
 )
 
 # Чипы, которые уже показывают вместимость — отдельный «N чел.» тогда не нужен.
-CAPACITY_LIKE_ICONS = frozenset({"capacity", "speakers"})
+CAPACITY_LIKE_ICONS = frozenset({"capacity"})
 
 VALID_STATUSES = frozenset({"busy", "pending", "service", "free", "selected"})
 
@@ -168,7 +179,14 @@ def _features(
     features: list[ResourceFeature] = []
     icons: set[str] = set()
 
-    for item in equipment or []:
+    if not isinstance(equipment, (list, tuple)):
+        equipment = []
+
+    for item in equipment:
+        if isinstance(item, dict):
+            item = item.get("label") or item.get("name") or item.get("title") or ""
+        elif isinstance(item, (list, tuple, set)):
+            continue
         label = str(item).strip()
         if not label:
             continue
@@ -241,11 +259,33 @@ def _to_hhmm(value: str) -> str:
 
 
 def _icon_for(label: str) -> str:
-    lowered = label.lower()
+    # Boundary padding lets short Latin acronyms match as standalone tokens,
+    # while longer Russian stems can still match inflected words.
+    normalized = _normalize_icon_text(label)
+    lowered = f" {normalized} "
     for icon, needles in ICON_RULES:
-        if any(needle in lowered for needle in needles):
+        if any(
+            _normalize_icon_text(needle) in lowered
+            and _needle_is_relevant(icon, needle, normalized)
+            for needle in needles
+        ):
             return icon
     return ""
+
+
+def _needle_is_relevant(icon: str, needle: str, normalized_label: str) -> bool:
+    if icon == "acoustics" and needle.casefold() in {"дб", "db"}:
+        return bool(re.search(r"\d\s*(?:дб|db)\b", normalized_label))
+    if icon == "audio" and needle.casefold() in {"shure sm", "sennheiser e"}:
+        return bool(re.search(r"\b(?:shure\s+sm|sennheiser\s+e)\s*\d", normalized_label))
+    return True
+
+
+def _normalize_icon_text(value: str) -> str:
+    """Normalize separators so acronym rules work with punctuation too."""
+
+    text = str(value).casefold().replace("²", "2")
+    return re.sub(r"[^0-9a-zа-яё]+", " ", text).strip()
 
 
 def _as_int(value: Any) -> int | None:
