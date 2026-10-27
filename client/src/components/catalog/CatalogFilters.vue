@@ -16,7 +16,7 @@
           />
         </span>
         <span class="catalog-filters__date-text">
-          <span class="catalog-filters__date-caption">Интервал брони:</span>
+          <span class="catalog-filters__date-caption">Интервал бронирования:</span>
           <span class="catalog-filters__date-value">{{ dateText }}</span>
         </span>
         <IconChevronDown :size="16" color="var(--color-text-muted)" aria-hidden="true" />
@@ -35,8 +35,8 @@
       <AppButton variant="secondary" size="md" @click="emit('open-filters-drawer')">
         <IconSliders :size="16" aria-hidden="true" />
         <span>Фильтры</span>
-        <span v-if="filters.filterCount" class="catalog-filters__count">
-          {{ filters.filterCount }}
+        <span v-if="activeFilterCount" class="catalog-filters__count">
+          {{ activeFilterCount }}
         </span>
       </AppButton>
 
@@ -52,9 +52,9 @@
         :key="category.id"
         type="button"
         class="catalog-filters__category"
-        :class="{ 'catalog-filters__category--active': activeCategory === category.id }"
-        :aria-pressed="activeCategory === category.id"
-        @click="update({ category: category.id })"
+        :class="{ 'catalog-filters__category--active': isCategoryActive(category.id) }"
+        :aria-pressed="isCategoryActive(category.id)"
+        @click="selectCategory(category.id)"
       >
         <span>{{ category.label }}</span>
         <span
@@ -71,17 +71,17 @@
         <span class="catalog-filters__applied-caption">Применено:</span>
 
         <AppChip
-          v-for="tag in activeTags"
-          :key="tag.id"
-          :label="tag.label"
-          :variant="tag.variant"
+          v-for="item in activeFilters"
+          :key="item.id"
+          :label="item.label"
+          :remove-label="`Удалить фильтр ${item.label}`"
           size="sm"
           removable
           active
-          @remove="removeTag(tag.id)"
+          @remove="emit('remove-filter', item.id)"
         />
 
-        <button type="button" class="catalog-filters__reset" @click="handleReset">
+        <button type="button" class="catalog-filters__reset" @click="emit('reset')">
           Сбросить все
         </button>
       </div>
@@ -113,14 +113,15 @@ import IconSliders from '../ui/Icons/Catalog Controls/IconSliders.vue';
 const props = defineProps({
   categories: {
     type: Array,
-    default: () => [
-      { id: 'all', label: 'Все', count: 18 },
-      { id: 'meeting', label: 'Переговорные комнаты', count: 8 },
-      { id: 'desks', label: 'Рабочие места', count: 5 },
-      { id: 'conf', label: 'Конференц-залы', count: 2 },
-      { id: 'studios', label: 'Студии', count: 1 },
-      { id: 'equipment', label: 'Оборудование', count: 2 },
-    ],
+    default: () => [],
+  },
+  activeFilters: {
+    type: Array,
+    default: () => [],
+  },
+  activeFilterCount: {
+    type: Number,
+    default: 0,
   },
   sortOptions: {
     type: Array,
@@ -137,13 +138,14 @@ const props = defineProps({
   },
   datePlaceholder: {
     type: String,
-    default: 'Выберите интервал',
+    default: 'Выберите дату и время',
   },
 });
 
 const emit = defineEmits([
   'filter-change',
   'reset',
+  'remove-filter',
   'open-filters-drawer',
   'open-date-picker',
 ]);
@@ -152,10 +154,6 @@ const filters = defineModel({
   type: Object,
   required: true,
 });
-
-const activeTags = computed(() => filters.value.activeTags ?? []);
-
-const activeCategory = computed(() => filters.value.category ?? 'all');
 
 const viewMode = computed({
   get: () => filters.value.viewMode ?? 'grid',
@@ -166,28 +164,24 @@ const dateText = computed(() => filters.value.dateRangeText || props.datePlaceho
 
 const dateLabel = computed(() => `Интервал бронирования: ${dateText.value}`);
 
-const hasActiveFilters = computed(
-  () =>
-    activeTags.value.length > 0 ||
-    activeCategory.value !== 'all' ||
-    Boolean(filters.value.search),
-);
+const hasActiveFilters = computed(() => props.activeFilters.length > 0);
+
+function isCategoryActive(id) {
+  const selected = Array.isArray(filters.value.categories) ? filters.value.categories : [];
+  if (id === 'all') {
+    return selected.length === 0 && (!filters.value.category || filters.value.category === 'all');
+  }
+  return selected.includes(id) || filters.value.category === id;
+}
+
+function selectCategory(id) {
+  update({ category: id, categories: id === 'all' ? [] : [id] });
+}
 
 function update(patch) {
   const next = { ...filters.value, ...patch };
   filters.value = next;
   emit('filter-change', next);
-}
-
-function removeTag(id) {
-  update({ activeTags: activeTags.value.filter((tag) => tag.id !== id) });
-}
-
-function handleReset() {
-  const next = { ...filters.value, search: '', category: 'all', activeTags: [] };
-  filters.value = next;
-  emit('filter-change', next);
-  emit('reset');
 }
 </script>
 
@@ -289,6 +283,7 @@ function handleReset() {
   overflow-x: auto;
   scrollbar-width: none;
 }
+.catalog-filters__active { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 
 .catalog-filters__categories::-webkit-scrollbar {
   display: none;

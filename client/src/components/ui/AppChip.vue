@@ -3,13 +3,14 @@
     class="app-chip"
     :class="chipModifiers"
     :role="removable ? 'group' : undefined"
+    :aria-label="removable ? `Фильтр: ${label}` : undefined"
     :aria-disabled="disabled || undefined"
   >
     <button
       type="button"
       class="app-chip__main"
       :disabled="disabled"
-      :aria-pressed="removable ? undefined : active"
+      :aria-pressed="active"
       @click="handleSelect"
     >
       <span v-if="resolvedIcon" class="app-chip__icon">

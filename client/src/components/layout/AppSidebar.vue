@@ -5,7 +5,13 @@
 
       <nav class="sidebar__nav">
         <NavSection>
-          <NavItem to="/" label="Каталог ресурсов" :icon="IconGrid" :count="4" badge-variant="matcha" />
+          <NavItem
+            to="/"
+            label="Каталог ресурсов"
+            :icon="IconGrid"
+            :count="catalog.cards.length"
+            badge-variant="matcha"
+          />
           <NavItem to="/bookings" label="Мои бронирования" :icon="IconCalendarMonth" />
           <NavItem to="/calendar" label="Календарь" :icon="IconCalendarCheck" />
           <NavItem to="/gallery" label="UI-кит" :icon="IconSliders" />
@@ -34,9 +40,11 @@ import IconCalendarMonth from '../ui/Icons/Shell&Navigation/IconCalendarMonth.vu
 import IconCalendarCheck from '../ui/Icons/Shell&Navigation/IconCalendarCheck.vue';
 import IconSliders from '../ui/Icons/Catalog Controls/IconSliders.vue';
 import { useUserStore } from '../../stores/user';
+import { useCatalogStore } from '../../stores/catalog';
 
 const emit = defineEmits(['user-menu']);
 const userStore = useUserStore();
+const catalog = useCatalogStore();
 </script>
 
 <style scoped>

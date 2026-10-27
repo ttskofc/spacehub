@@ -6,8 +6,39 @@
       :stats="catalog.stats"
     />
 
-    <div class="catalog-page__filters">
-      <CatalogFilters v-model="catalog.filters" :categories="catalog.categories" />
+    <div ref="filtersPanelRef" class="catalog-page__filters">
+      <CatalogFilters
+        v-model="catalog.filters"
+        :categories="filterCategories"
+        :active-filters="catalog.activeFilterItems"
+        :active-filter-count="catalog.activeFilterCount"
+        @open-filters-drawer="openFiltersDrawer"
+        @open-date-picker="openDatePicker"
+        @remove-filter="onRemoveFilter"
+        @reset="resetAllFilters"
+      />
+      <CatalogDatePicker
+        v-if="datePickerOpen"
+        v-model="catalog.filters"
+        class="catalog-page__date-picker"
+        @apply="applyDateFilter"
+        @clear="clearDateFilter"
+        @close="datePickerOpen = false"
+      />
+      <ResourceFiltersDrawer
+        v-model="catalog.filters"
+        v-model:open="filtersOpen"
+        v-model:draft="draftFilters"
+        :categories="filterCategories"
+        :range="capacityRange"
+        :date="dateFilterConfig"
+        :equipment="equipmentOptions"
+        :tags="locationOptions"
+        :availability="availabilityOption"
+        :result-count="draftResultCount"
+        @reset="onDrawerReset"
+        @open-date-picker="openDatePicker"
+      />
     </div>
 
     <p v-if="catalog.slotsLoading && !catalog.loading" class="catalog-page__hint" role="status">
@@ -38,7 +69,7 @@
     <div v-else-if="catalog.isFilteredEmpty" class="catalog-state">
       <h2 class="catalog-state__title">Ничего не нашлось</h2>
       <p class="catalog-state__text">Под выбранные условия не подходит ни один ресурс.</p>
-      <AppButton variant="secondary" @click="catalog.resetFilters">Сбросить фильтры</AppButton>
+      <AppButton variant="secondary" @click="resetAllFilters">Сбросить фильтры</AppButton>
     </div>
 
     <div
@@ -71,7 +102,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import AppButton from '../components/ui/AppButton.vue';
@@ -79,13 +110,148 @@ import AppPagination from '../components/ui/AppPagination.vue';
 import CatalogFilters from '../components/catalog/CatalogFilters.vue';
 import CatalogHeader from '../components/catalog/CatalogHeader.vue';
 import ResourceCard from '../components/catalog/ResourceCard.vue';
-import { useCatalogStore } from '../stores/catalog';
+import ResourceFiltersDrawer from '../components/resource/ResourceFiltersDrawer.vue';
+import CatalogDatePicker from '../components/catalog/CatalogDatePicker.vue';
+import { createDefaultFilters, useCatalogStore } from '../stores/catalog';
 
 const catalog = useCatalogStore();
 const router = useRouter();
 const { pageSize } = storeToRefs(catalog);
+const filtersOpen = ref(false);
+const datePickerOpen = ref(false);
+const filtersPanelRef = ref(null);
 
-onMounted(() => catalog.load());
+const filterCategories = computed(() =>
+  catalog.categoriesWithCounts.filter((category) => category.id !== 'all'),
+);
+const capacityRange = computed(() => {
+  const bounds = catalog.capacityBounds;
+  if (!bounds) return null;
+  const { min, max } = bounds;
+  return {
+    min,
+    max,
+    step: 1,
+    marks: [
+      { value: min, label: String(min) },
+      { value: max, label: String(max) },
+    ],
+    formatValue: (value) => `${value[0]}–${value[1]} чел.`,
+  };
+});
+const equipmentOptions = computed(() => {
+  const values = new Map();
+  for (const resource of catalog.cards) {
+    for (const feature of resource.features ?? []) {
+      const label = typeof feature === 'string' ? feature : feature.label;
+      if (label) values.set(label, label);
+    }
+  }
+  return [...values.values()]
+    .sort((a, b) => a.localeCompare(b, 'ru'))
+    .map((label) => ({ id: label, label }));
+});
+const locationOptions = computed(() => {
+  const values = new Map();
+  for (const resource of catalog.cards) {
+    if (resource.location) values.set(resource.location, resource.location);
+  }
+  return [...values.values()]
+    .sort((a, b) => a.localeCompare(b, 'ru'))
+    .map((label) => ({ id: label, label }));
+});
+const availabilityOption = computed(() => ({
+  label: 'Только доступные',
+  description: 'Показать ресурсы со свободным временем сегодня',
+}));
+const dateFilterConfig = computed(() => ({
+  label: 'Интервал бронирования',
+  placeholder: catalog.filters.dateRangeText || 'Выберите дату и время',
+}));
+
+const draftFilters = ref(createDefaultFilters());
+
+const draftResultCount = computed(() => {
+  const draft = draftFilters.value;
+  const hasDraftCriteria =
+    Boolean(draft.search) ||
+    Boolean(draft.date) ||
+    (draft.categories?.length ?? 0) > 0 ||
+    (draft.category && draft.category !== 'all') ||
+    (draft.tags?.length ?? 0) > 0 ||
+    (draft.equipment?.length ?? 0) > 0 ||
+    Boolean(draft.onlyAvailable) ||
+    Boolean(draft.timeSlot) ||
+    Array.isArray(draft.range);
+  if (!hasDraftCriteria) return null;
+  return catalog.countForFilters(draft);
+});
+
+function openFiltersDrawer() {
+  draftFilters.value = { ...createDefaultFilters(), ...catalog.filters };
+  filtersOpen.value = true;
+}
+
+function onDrawerApply(next) {
+  catalog.applyFilters(next);
+  draftFilters.value = { ...next };
+  catalog.refreshSlots();
+}
+
+function onRemoveFilter(id) {
+  catalog.removeFilter(id);
+}
+
+function onDrawerReset() {
+  draftFilters.value = createDefaultFilters();
+  catalog.refreshSlots();
+}
+
+function resetAllFilters() {
+  catalog.resetFilters();
+  draftFilters.value = createDefaultFilters();
+  catalog.refreshSlots();
+}
+
+function applyDateFilter(value) {
+  catalog.applyFilters({ ...catalog.filters, ...value });
+  datePickerOpen.value = false;
+  catalog.loadSlotsForFilterDate();
+}
+
+function openDatePicker() {
+  filtersOpen.value = false;
+  datePickerOpen.value = true;
+}
+
+function clearDateFilter() {
+  catalog.applyFilters({ ...catalog.filters, date: '', timeStart: '', timeEnd: '', dateRangeText: 'Выберите дату и время' });
+  datePickerOpen.value = false;
+}
+
+function onDocumentPointerDown(event) {
+  if (!datePickerOpen.value) return;
+  const panel = filtersPanelRef.value;
+  if (panel && panel.contains(event.target)) return;
+  datePickerOpen.value = false;
+}
+
+function onDocumentKeydown(event) {
+  if (event.key === 'Escape' && datePickerOpen.value) {
+    datePickerOpen.value = false;
+  }
+}
+
+onMounted(() => {
+  catalog.load();
+  document.addEventListener('pointerdown', onDocumentPointerDown, true);
+  document.addEventListener('keydown', onDocumentKeydown);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', onDocumentPointerDown, true);
+  document.removeEventListener('keydown', onDocumentKeydown);
+});
 
 async function reload() {
   await catalog.reload();
@@ -112,10 +278,20 @@ function onDetails(resource) {
 }
 
 .catalog-page__filters {
+  position: relative;
+  z-index: 10;
   padding: 20px;
   background: var(--color-surface);
   border: 1px solid var(--color-border-subtle);
   border-radius: var(--radius-lg);
+}
+
+.catalog-page__date-picker {
+  position: absolute;
+  z-index: 20;
+  top: 76px;
+  left: 20px;
+  margin: 0;
 }
 
 .catalog-page__hint {
@@ -232,6 +408,14 @@ function onDetails(resource) {
   }
   to {
     background-position: -200% 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .catalog-page__date-picker {
+    left: 50%;
+    width: min(320px, calc(100vw - 48px));
+    transform: translateX(-50%);
   }
 }
 

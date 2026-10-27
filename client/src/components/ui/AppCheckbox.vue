@@ -193,7 +193,12 @@ function handleChange(e) {
 .app-checkbox__check {
   width: 10px;
   height: 10px;
-  color: inherit;
+  color: var(--color-text-on-primary);
+  pointer-events: none;
+}
+
+.app-checkbox--matcha .app-checkbox__check {
+  color: var(--color-accent-matcha-dark);
 }
 
 .app-checkbox__dash {
